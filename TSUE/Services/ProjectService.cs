@@ -74,7 +74,7 @@ namespace TSUE.Services
 
         public Project GetProject(int projectId)
         {
-            return _context.Projects.Where(x => x.ProjectId == projectId).FirstOrDefault();
+            return _context.Projects.Include(x=>x.ProjectFiles).Where(x => x.ProjectId == projectId).FirstOrDefault();
         }
 
         public AddProjectViewModel SetProjectForCreate()

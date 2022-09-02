@@ -48,7 +48,6 @@
             <div class="mainheading">
 
                 <!-- Begin Top Meta -->
-             
                 <!-- End Top Menta -->
 
                 <h1 class="posttitle">@Model.ProjectSummary</h1>
@@ -62,24 +61,29 @@
             <div class="article-post">
                 <p>
                     @Html.Raw(@Model.ProjectDescription)
-                    
+
                 </p>
             </div>
             <!-- End Post Content -->
             <!-- Begin Tags -->
             <div class="after-post-tags">
                 <ul class="tags">
-                    <li><a href="#">Design</a></li>
-                    <li><a href="#">Growth Mindset</a></li>
-                    <li><a href="#">Productivity</a></li>
-                    <li><a href="#">Personal Growth</a></li>
+                    <li><a href="#">Download Documents</a></li>
                 </ul>
             </div>
             <!-- End Tags -->
+            @{
+                var strBase64 = Convert.ToBase64String(Model.ProjectFiles.FirstOrDefault().ProjectFile1);
+                var FileContent = string.Format("data:application/pdf;base64,{0}", strBase64);
 
+
+                <center>
+                    <br /><br /><embed style="height: 1000px; width: 100%;" src="@FileContent" />
+                    <br />
+                </center>
+            }
         </div>
         <!-- End Post -->
 
     </div>
 </div>
-<!-- End Article

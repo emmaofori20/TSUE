@@ -17,7 +17,6 @@ namespace TSUE.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IProjectService projectService;
 
-
         public HomeController(ILogger<HomeController> logger, IProjectService projectService)
         {
             this.projectService = projectService;
