@@ -1,0 +1,43 @@
+﻿@model CategoryViewModel
+
+@{
+    ViewData["Title"] = "Create Category";
+}
+
+<form class="card-body" method="post" enctype="multipart/form-data" asp-controller="Category" asp-action="CreateCategory">
+    <!-- Name input -->
+    <div class="form-outline mb-4">
+        <label class="form-label">Category Name</label>
+        <input type="text" asp-for="CategoryName" class="form-control" />
+        <span asp-validation-for="CategoryImage" class="text-danger"></span>
+    </div>
+
+    <!-- Description input -->
+    <div class="form-outline mb-4">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-control" />
+    </div>
+
+    <!-- Image -->
+    <div class="form-outline mb-4">
+        <label>Upload Icon</label>
+        <div class="custom-file">
+            <input type="file" id="imgInp" asp-for="CategoryImage" />
+            <img id="blah" src="#" style="height:70px;  width:70px" class="img-thumbnail" />
+
+            <script>
+                imgInp.onchange = evt => {
+                    const [file] = imgInp.files
+                    if (file) {
+                        blah.src = URL.createObjectURL(file)
+                    }
+                }
+            </script>
+
+        </div>
+
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-primary btn-block mb-4">Add</button>
+</form>

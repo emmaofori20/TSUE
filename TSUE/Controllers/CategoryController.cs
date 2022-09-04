@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TSUE.Services.IServices;
+using TSUE.ViewModels;
 
 namespace TSUE.Controllers
 {
@@ -31,19 +32,23 @@ namespace TSUE.Controllers
         }
 
         // GET: CategoryController/Create
-        public ActionResult Create()
+        public ActionResult CreateCategory()
         {
             return View();
         }
 
         // POST: CategoryController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult CreateCategory(CategoryViewModel model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    categoryservice.AddCategory(model);
+                    return RedirectToAction("Index", "Category");
+                }
+                return View(model);
             }
             catch
             {
