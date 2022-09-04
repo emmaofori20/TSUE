@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace TSUE.Models
 {
-    public partial class TSUEProjectDbContext : IdentityDbContext
+    public partial class TSUEProjectDbContext : DbContext
     {
         public TSUEProjectDbContext()
         {
@@ -18,6 +17,13 @@ namespace TSUE.Models
         {
         }
 
+        public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
@@ -27,17 +33,99 @@ namespace TSUE.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=UITS-DEV-TEAM\\SQLEXPRESS;Initial Catalog=TSUEProjectDb;Integrated Security=True");
-            }
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<AspNetRole>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedName] IS NOT NULL)");
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<AspNetRoleClaim>(entity =>
+            {
+                entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+                entity.Property(e => e.RoleId).IsRequired();
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetRoleClaims)
+                    .HasForeignKey(d => d.RoleId);
+            });
+
+            modelBuilder.Entity<AspNetUser>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+                entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+                entity.Property(e => e.Email).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<AspNetUserClaim>(entity =>
+            {
+                entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+                entity.Property(e => e.UserId).IsRequired();
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserClaims)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserLogin>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+                entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
+                entity.Property(e => e.UserId).IsRequired();
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserLogins)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserRole>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+
+                entity.HasIndex(e => e.RoleId, "IX_AspNetUserRoles_RoleId");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.RoleId);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserToken>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserTokens)
+                    .HasForeignKey(d => d.UserId);
+            });
 
             modelBuilder.Entity<Category>(entity =>
             {
@@ -46,6 +134,8 @@ namespace TSUE.Models
                     .IsClustered(false);
 
                 entity.ToTable("Category");
+
+                entity.Property(e => e.CategoryDescription).HasMaxLength(255);
 
                 entity.Property(e => e.CategoryName).HasMaxLength(255);
             });
@@ -106,6 +196,10 @@ namespace TSUE.Models
 
                 entity.ToTable("ProjectCategory");
 
+                entity.HasIndex(e => e.CategoryId, "IX_ProjectCategory_CategoryId");
+
+                entity.HasIndex(e => e.ProjectId, "IX_ProjectCategory_ProjectId");
+
                 entity.Property(e => e.CreatedBy)
                     .IsRequired()
                     .HasMaxLength(255);
@@ -137,6 +231,10 @@ namespace TSUE.Models
 
                 entity.ToTable("ProjectComment");
 
+                entity.HasIndex(e => e.CommentId, "IX_ProjectComment_CommentId");
+
+                entity.HasIndex(e => e.ProjectId, "IX_ProjectComment_ProjectId");
+
                 entity.HasOne(d => d.Comment)
                     .WithMany(p => p.ProjectComments)
                     .HasForeignKey(d => d.CommentId)
@@ -157,6 +255,8 @@ namespace TSUE.Models
                     .IsClustered(false);
 
                 entity.ToTable("ProjectFile");
+
+                entity.HasIndex(e => e.ProjectId, "IX_ProjectFile_ProjectId");
 
                 entity.Property(e => e.CreatedBy)
                     .IsRequired()

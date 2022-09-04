@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,9 +17,19 @@ namespace TSUE.Services
             this._context = context;
         }
 
-        public List<ProjectCategory> GetAllCategories()
+        public List<Category> GetAllCategories()
         {
-            return _context.ProjectCategories.ToList();
+            return _context.Categories.ToList();
+        }
+
+        public Category GetCategory(int CategoryId)
+        {
+            return _context.Categories.Where(x => x.CategoryId == CategoryId).FirstOrDefault();
+        }
+
+        public List<ProjectCategory> GetProjectCategories(int CategoryId)
+        {
+            return _context.ProjectCategories.Include(x => x.Project).Where(x => x.CategoryId == CategoryId).ToList();
         }
     }
 }

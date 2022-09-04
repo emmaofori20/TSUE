@@ -14,6 +14,8 @@ namespace TSUE.Models
 
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
+        public byte[] CategoryImage { get; set; }
+        public string CategoryDescription { get; set; }
 
         public virtual ICollection<ProjectCategory> ProjectCategories { get; set; }
     }

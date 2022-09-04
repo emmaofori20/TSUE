@@ -4,21 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TSUE.Services.IServices;
 
 namespace TSUE.Controllers
 {
     public class CategoryController : Controller
     {
+        private readonly ICategoryService categoryservice;
+
+        public CategoryController(ICategoryService categoryservice)
+        {
+            this.categoryservice = categoryservice;
+        }
         // GET: CategoryController
         public ActionResult Index()
         {
-            return View();
+            var res = categoryservice.GetAllCategories();
+            return View(res);
         }
 
-        // GET: CategoryController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult CategoryProject(int CategoryId)
         {
-            return View();
+            ViewBag.CategoryName = categoryservice.GetCategory(CategoryId).CategoryName;
+            var res=categoryservice.GetProjectCategories(CategoryId);
+            return View(res);
         }
 
         // GET: CategoryController/Create

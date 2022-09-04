@@ -8,6 +8,10 @@ namespace TSUE.Services.IServices
 {
     public interface ICategoryService
     {
-        public List<ProjectCategory> GetAllCategories(); 
+        public List<Category> GetAllCategories();
+
+        public List<ProjectCategory> GetProjectCategories(int CategoryId);
+
+        public Category GetCategory(int CategoryId);
     }
 }
