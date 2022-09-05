@@ -57,19 +57,30 @@ namespace TSUE.Controllers
         }
 
         // GET: CategoryController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult EditCategory(int CategoryId)
         {
-            return View();
+            var results = categoryservice.GetCategory(CategoryId);
+            var Editcategory = new CategoryViewModel() { 
+                CategoryId =results.CategoryId,
+                CategoryDescription = results.CategoryDescription,
+                CategoryName = results.CategoryName,
+                CategoryImageFromDatabase = results.CategoryImage
+            };
+            return View(Editcategory);
         }
 
         // POST: CategoryController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult EditCategory(int id, CategoryViewModel model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    categoryservice.EditCategory(model);
+                    return RedirectToAction("Index", "Category");
+                }
+                return View(model);
             }
             catch
             {

@@ -16,6 +16,7 @@ namespace TSUE.Models
         public string CategoryName { get; set; }
         public byte[] CategoryImage { get; set; }
         public string CategoryDescription { get; set; }
+        public bool? IsDeleted { get; set; }
 
         public virtual ICollection<ProjectCategory> ProjectCategories { get; set; }
     }

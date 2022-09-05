@@ -25,6 +25,32 @@ namespace TSUE.Controllers
             return View(res);
         }
 
+        public IActionResult ProjectComments(int ProjectId)
+        {
+            var res = projectService.ProjectComments(ProjectId);
+            return View(res);
+        }
+
+        [HttpPost]
+        public IActionResult AddComments(ProjectCommentViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return RedirectToAction("Index", "Category");
+
+                }
+                return RedirectToAction("Index", "Category");
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
         // GET: ProjectController/Details/5
         public ActionResult ViewProject(int ProjectId)
         {

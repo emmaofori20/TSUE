@@ -32,6 +32,22 @@ namespace TSUE.Services
             _context.SaveChanges();
         }
 
+        public void EditCategory(CategoryViewModel model)
+        {
+            var res = _context.Categories.Find(model.CategoryId);
+
+            res.CategoryDescription = model.CategoryDescription;
+            res.CategoryName = model.CategoryName;
+            if(model.CategoryImage!= null)
+            {
+                res.CategoryImage = UploadImage(model.CategoryImage);
+            }
+
+            _context.Categories.Update(res);
+            _context.SaveChanges();
+            
+        }
+
         public List<Category> GetAllCategories()
         {
             return _context.Categories.ToList();

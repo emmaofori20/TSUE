@@ -77,6 +77,20 @@ namespace TSUE.Services
             return _context.Projects.Include(x=>x.ProjectFiles).Where(x => x.ProjectId == projectId).FirstOrDefault();
         }
 
+        public ProjectCommentViewModel ProjectComments(int ProjectId)
+        {
+            var results = new ProjectCommentViewModel()
+            {
+                ProjectId = ProjectId,
+                ProjectComment = _context.ProjectComments.Include(x => x.Comment)
+                .Where(x => x.ProjectId == ProjectId)
+                .ToList(),
+
+            };
+
+            return results;
+        }
+
         public AddProjectViewModel SetProjectForCreate()
         {
             var res = _context.Categories.ToList();

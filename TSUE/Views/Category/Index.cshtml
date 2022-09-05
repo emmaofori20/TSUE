@@ -4,6 +4,44 @@
     ViewData["Title"] = "All Categories";
 }
 
+<style>
+   
+    .dropdown {
+        position: absolute;
+        display: inline-block;
+        right: 0.4em;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: relative;
+        margin-top: 0px;
+        background-color: #f9f9f9;
+        min-width: 60px;
+        overflow: auto;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+    .dropdown a:hover {
+        background-color: #f1f1f1;
+    }
+    i{
+        padding:2%;
+    }
+    i:hover  .dropdown-content{
+        color: blue;
+        display: block;
+    }
+   
+</style>
 
 <section class="featured-posts">
     <div class="section-title">
@@ -40,8 +78,21 @@
                         </a>
                     </div>
                     <div class="col-md-7">
+
                         <div class="card-block">
-                            <h2 class="card-title"><a href="post.html">@item.CategoryName</a></h2>
+                            <h2 class="card-title">
+                                <a href="post.html">@item.CategoryName</a>
+                                <i class='fa fa-ellipsis-v' style="float:right">
+                                    <!-- menu -->
+                                    <div id="myDropdown" class="dropdown-content">
+                                        <a class="btn btn-warning" 
+                                           asp-controller="Category" asp-action="EditCategory"  asp-route-CategoryId="@item.CategoryId">Edit</a>
+                                        <a class="btn btn-danger">Delete</a>
+                                    </div>
+                                </i>
+                               
+                            </h2>
+                            
                             <h4 class="card-text">@item.CategoryDescription</h4>
                             <div class="metafooter">
                                 <div class="wrapfooter">
@@ -66,3 +117,31 @@
 
     </div>
 </section>
+
+
+
+<script>
+    function changeLanguage(language) {
+        var element = document.getElementById("url");
+        element.value = language;
+        element.innerHTML = language;
+    }
+
+    function showDropdown() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function (event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+</script>

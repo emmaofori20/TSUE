@@ -29,7 +29,7 @@
                             }
                             else
                             {
-                                <img class="img-fluid" src="data:image;base64,@Convert.ToBase64String(proj.Project.ProjectIcon)" alt="">
+                                <img class="img-fluid" style="object-fit:cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(proj.Project.ProjectIcon)" alt="">
 
                             }
 
@@ -38,7 +38,7 @@
                     </a>
                     <div class="card-block">
                         <h2 class="card-title"><a>@proj.Project.ProjectTitle</a></h2>
-                        <h4 class="card-text">@proj.Project.ProjectSummary</h4>
+                        <h4 class="card-text" style=" overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; ">@proj.Project.ProjectSummary</h4>
                         <div class="metafooter">
                             <div class="wrapfooter">
                                 <span class="meta-footer-thumb">

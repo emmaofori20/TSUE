@@ -96,15 +96,15 @@
                 <!-- begin post -->
                 <div class="card">
                     <a asp-action="ViewProject" asp-controller="Project" asp-route-ProjectId="@proj.ProjectId">
-                        <div style="height: 200px; width: 100%;">
+                        <div style="height: 200px; width: 100%; ">
                             @if (proj.ProjectIcon == null)
                             {
-                                <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="assets/img/demopic/10.jpg" alt="">
+                                <img class="thumbnail" style="object-fit:cover; height: 100%; width: 100%;" src="assets/img/demopic/10.jpg" alt="">
 
                             }
                             else
                             {
-                                <img class="img-fluid" src="data:image;base64,@Convert.ToBase64String(proj.ProjectIcon)" alt="">
+                                <img class="img-fluid" style="object-fit:cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(proj.ProjectIcon)" alt="">
 
                             }
 
@@ -113,7 +113,9 @@
                     </a>
                     <div class="card-block">
                         <h2 class="card-title"><a>@proj.ProjectTitle</a></h2>
-                        <h4 class="card-text">@proj.ProjectSummary</h4>
+                        <h4 class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; " >
+                            @proj.ProjectSummary
+                        </h4>
                         <div class="metafooter">
                             <div class="wrapfooter">
                                 <span class="meta-footer-thumb">
