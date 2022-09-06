@@ -18,5 +18,7 @@ namespace TSUE.Services.IServices
         public Project GetProject(int projectId);
 
         public ProjectCommentViewModel ProjectComments(int ProjectId);
+
+        public void AddProjectComment(ProjectCommentViewModel model);
     }
 }

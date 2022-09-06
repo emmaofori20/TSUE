@@ -18,10 +18,17 @@ namespace TSUE.Controllers
             this.projectService = projectService;
         }
         // GET: ProjectController
-        public ActionResult Index()
+        public ActionResult Index(string? searchText)
         {
             var res = projectService.GetAllProject().OrderByDescending(x=>x.CreatedOn);
 
+            if (!string.IsNullOrEmpty(searchText))
+            {
+               var results = res.Where(x => x.ProjectTitle.ToLower().Contains(searchText.ToLower()) 
+                            || x.ProjectSummary.ToLower().Contains(searchText.ToLower())).ToList();
+
+                return View(results);
+            }
             return View(res);
         }
 
@@ -38,10 +45,11 @@ namespace TSUE.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    return RedirectToAction("Index", "Category");
+                    projectService.AddProjectComment(model);
+                    return RedirectToAction("ProjectComments", "Project", new{ ProjectId = model.ProjectId });
 
                 }
-                return RedirectToAction("Index", "Category");
+                return RedirectToAction("ProjectComments", "Project", new { ProjectId = model.ProjectId });
 
             }
             catch (Exception ex)

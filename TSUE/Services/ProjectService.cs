@@ -67,6 +67,31 @@ namespace TSUE.Services
             return newProject;
         }
 
+        public void AddProjectComment(ProjectCommentViewModel model)
+        {
+            var comment = new Comment()
+            {
+                Email = model.AddComment.Email,
+                Comment1 = model.AddComment.Message,
+                CommenterName = model.AddComment.FullName,
+                CreatedBy = model.AddComment.FullName,
+                CreatedOn = DateTime.Now
+            };
+            _context.Comments.Add(comment);
+            _context.SaveChanges();
+
+            //// Adding to projectComments table
+
+            var projectCommnet = new ProjectComment()
+            {
+                ProjectId = model.ProjectId,
+                CommentId = comment.CommentId
+            };
+
+            _context.ProjectComments.Add(projectCommnet);
+            _context.SaveChanges();
+        }
+
         public List<Project> GetAllProject()
         {
             return _context.Projects.Where(x => x.IsDeleted == false).ToList();

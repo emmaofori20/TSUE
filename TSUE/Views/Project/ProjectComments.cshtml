@@ -1,7 +1,9 @@
 ﻿@model ProjectCommentViewModel
 
 <link href="~/css/Comment.css" rel="stylesheet" />
-
+@{
+    ViewData["Title"] = "Comment";
+}
 
 
 <!-- Main Body -->
@@ -26,10 +28,10 @@
                         </div>
                     }
                 }
-              
+
             </div>
             <div class="col-lg-4 col-md-5 col-sm-4 offset-md-1 offset-sm-1 col-12 mt-4">
-                <form class="Myform"id="algin-form" asp-action="AddComments" asp-controller="Project" method="post">
+                <form class="Myform" id="algin-form" asp-action="AddComments" asp-controller="Project" method="post">
                     <input asp-for="ProjectId" hidden />
                     <div class="form-group">
                         <h4>Leave a comment</h4>
@@ -38,16 +40,16 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Full Name</label>
-                        <input type="text" asp-for="AddComment.FullName"  class="form-control">
+                        <input type="text" asp-for="AddComment.FullName" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="text" asp-for="AddComment.Email" class="form-control">
                     </div>
-                   
-                   
+
+
                     <div class="form-group">
-                        <button type="button" id="post" class="btn">Post Comment</button>
+                        <button type="submit" id="post" class="btn">Post Comment</button>
                     </div>
                 </form>
             </div>
