@@ -97,6 +97,7 @@ namespace TSUE.Controllers
         public ActionResult Edit(int id)
         {
             return View();
+            //work on this
         }
 
         // POST: ProjectController/Edit/5
@@ -118,6 +119,7 @@ namespace TSUE.Controllers
         public ActionResult Delete(int id)
         {
             return View();
+            
         }
 
         // POST: ProjectController/Delete/5
@@ -128,6 +130,7 @@ namespace TSUE.Controllers
             try
             {
                 return RedirectToAction(nameof(Index));
+                //work on this
             }
             catch
             {
