@@ -75,7 +75,8 @@ namespace TSUE.Services
                 Comment1 = model.AddComment.Message,
                 CommenterName = model.AddComment.FullName,
                 CreatedBy = model.AddComment.FullName,
-                CreatedOn = DateTime.Now
+                CreatedOn = DateTime.Now,
+                
             };
             _context.Comments.Add(comment);
             _context.SaveChanges();

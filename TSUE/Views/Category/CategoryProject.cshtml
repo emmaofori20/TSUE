@@ -2,6 +2,14 @@
 
 
 @{
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    }
+    else
+    {
+
+    }
     ViewData["Title"] = @ViewBag.CategoryName;
 }
 

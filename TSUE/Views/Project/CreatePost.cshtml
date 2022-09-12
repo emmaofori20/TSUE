@@ -1,9 +1,17 @@
 ﻿@model AddProjectViewModel
 @{
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    }
+    else
+    {
+
+    }
     ViewData["Title"] = "CreatePost";
 }
 <link href="~/lib/Trumbowyg-main/Trumbowyg-main/dist/ui/trumbowyg.css" rel="stylesheet" />
-<div>
+<div style="padding:2%; background-color:white">
     <h1>Add New Post</h1>
 
     <form enctype="multipart/form-data" asp-action="CreatePost" method="post" asp-controller="Project">

@@ -1,10 +1,18 @@
 ﻿@model CategoryViewModel
 
 @{
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    }
+    else
+    {
+
+    }
     ViewData["Title"] = "Create Category";
 }
 
-<form class="card-body" method="post" enctype="multipart/form-data" asp-controller="Category" asp-action="CreateCategory">
+<form class="card-body" style="background-color:white; padding:2%" method="post" enctype="multipart/form-data" asp-controller="Category" asp-action="CreateCategory">
     <!-- Name input -->
     <div class="form-outline mb-4">
         <label class="form-label">Category Name</label>

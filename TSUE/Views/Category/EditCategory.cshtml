@@ -1,10 +1,18 @@
 ﻿@model CategoryViewModel
 
 @{
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    }
+    else
+    {
+
+    }
     ViewData["Title"] = "Edit Category";
 }
 
-<form class="card-body" method="post" enctype="multipart/form-data" asp-controller="Category" asp-action="EditCategory">
+<form class="card-body" style="background-color: white; padding: 2%" method="post" enctype="multipart/form-data" asp-controller="Category" asp-action="EditCategory">
     <input hidden asp-for="CategoryId" />
     
     <!-- Name input -->

@@ -65,23 +65,25 @@
                 </p>
             </div>
             <!-- End Post Content -->
-            <!-- Begin Tags -->
-            <div class="after-post-tags">
-                <ul class="tags">
-                    <li><a href="#">Download Documents</a></li>
-                </ul>
-            </div>
-            <!-- End Tags -->
+
             @{
                 var strBase64 = Convert.ToBase64String(Model.ProjectFiles.FirstOrDefault().ProjectFile1);
                 var FileContent = string.Format("data:application/pdf;base64,{0}", strBase64);
 
 
-                <center>
-                    <br /><br /><embed style="height: 1000px; width: 100%;" src="@FileContent" />
-                    <br />
-                </center>
+                @*<center>
+                <br /><br /><embed style="height: 1000px; width: 100%;" src="@FileContent" />
+                <br />
+            </center>*@
             }
+            <!-- Begin Tags -->
+            <div class="after-post-tags">
+                <ul class="tags">
+                    <li><a target="_blank" href="@FileContent" download>Download Documents</a></li>
+                </ul>
+            </div>
+            <!-- End Tags -->
+
         </div>
         <!-- End Post -->
 

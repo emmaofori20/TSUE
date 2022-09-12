@@ -29,7 +29,7 @@ namespace TSUE.Controllers
 
                 return View(results);
             }
-            return View(res);
+            return View(res.ToList());
         }
 
         public IActionResult ProjectComments(int ProjectId)

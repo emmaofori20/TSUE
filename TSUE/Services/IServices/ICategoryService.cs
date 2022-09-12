@@ -18,5 +18,7 @@ namespace TSUE.Services.IServices
         public void AddCategory(CategoryViewModel model);
 
         public void EditCategory(CategoryViewModel model);
+
+        public void DeleteCategory(int CategoryId);
     }
 }
