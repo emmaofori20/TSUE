@@ -17,6 +17,8 @@ namespace TSUE.Models
         {
         }
 
+        public virtual DbSet<AnalyticType> AnalyticTypes { get; set; }
+        public virtual DbSet<AnalyticTypeResponse> AnalyticTypeResponses { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
@@ -33,12 +35,50 @@ namespace TSUE.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<AnalyticType>(entity =>
+            {
+                entity.HasKey(e => e.AnalyticTypeId)
+                    .IsClustered(false);
+
+                entity.ToTable("AnalyticType");
+
+                entity.Property(e => e.AnalyticTypeName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedBy).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<AnalyticTypeResponse>(entity =>
+            {
+                entity.HasKey(e => e.AnalyticTypeResponseId)
+                    .IsClustered(false);
+
+                entity.ToTable("AnalyticTypeResponse");
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedBy).HasMaxLength(255);
+
+                entity.Property(e => e.ResponseValue)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.HasOne(d => d.AnalyticType)
+                    .WithMany(p => p.AnalyticTypeResponses)
+                    .HasForeignKey(d => d.AnalyticTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AnalyticType_AnalyticTypeResponse");
+            });
 
             modelBuilder.Entity<AspNetRole>(entity =>
             {
