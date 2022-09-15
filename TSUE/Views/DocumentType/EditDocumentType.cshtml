@@ -1,0 +1,60 @@
+﻿@model DocumentTypeViewModel
+
+@{
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    }
+    else
+    {
+
+    }
+    ViewData["Title"] = "Edit DocumentType";
+}
+
+<form class="card-body" style="background-color: white; padding: 2%" method="post" enctype="multipart/form-data" asp-controller="DocumentType" asp-action="EditDocumentType">
+    <input hidden asp-for="DocumentTypeId" />
+    
+    <!-- Name input -->
+    <div class="form-outline mb-4">
+        <label class="form-label">DocumentType Name</label>
+        <input type="text" asp-for="DocumentTypeName" class="form-control" />
+        <span asp-validation-for="DocumentTypeName" class="text-danger"></span>
+    </div>
+
+   
+
+    <!-- Image -->
+    <div class="form-outline mb-4">
+        <label>Upload Icon</label>
+        <div class="custom-file">
+            <input type="file" id="imgInp" asp-for="DocumentTypeIcon" />
+
+            @if (Model.DocumentTypeImage != null)
+            {
+                <img id="blah" src="data:image;base64,@Convert.ToBase64String(Model.DocumentTypeImage)" style="height:70px;  width:70px" class="img-thumbnail" />
+
+            }
+            else
+            {
+                <img id="blah" src="#" style="height:70px;  width:70px" class="img-thumbnail" />
+
+            }
+
+
+            <script>
+                imgInp.onchange = evt => {
+                    const [file] = imgInp.files
+                    if (file) {
+                        blah.src = URL.createObjectURL(file)
+                    }
+                }
+            </script>
+
+        </div>
+
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-primary btn-block mb-4">Save Changes</button>
+</form>

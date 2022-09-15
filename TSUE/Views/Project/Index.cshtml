@@ -1,4 +1,5 @@
-﻿@model List<Project>
+﻿@using TSUE.Models.Data
+@model List<TSUE.Models.Data.Project>
 @{
     if (User.Identity.IsAuthenticated)
     {
@@ -10,18 +11,58 @@
     }
     ViewData["Title"] = "All projects";
 }
+<link href="~/css/Card.css" rel="stylesheet" />
+<style>
 
+    .dropdown {
+        position: absolute;
+        display: inline-block;
+        right: 0.4em;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        padding: 2%;
+        margin-top: 0px;
+        background-color: #f9f9f9;
+        min-width: 60px;
+        overflow: auto;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+    .dropdown a:hover {
+        background-color: #f1f1f1;
+    }
+
+    i {
+        padding: 2%;
+    }
+
+        i:hover .dropdown-content {
+            color: blue;
+            display: block;
+        }
+</style>
 
 <!-- Begin Site Title
 =
 
     ================================================= -->
 <div class="container">
- 
-    <!-- End Site Title
-    ================================================== -->
-    <!-- Begin Featured
-    ================================================== -->
+
+    @*End Site Title
+        ==================================================
+         Begin Featured
+        ==================================================*@
     <section class="featured-posts">
         <div class="section-title">
             <h2>
@@ -31,58 +72,123 @@
             </h2>
 
         </div>
-        <div class="card-columns listfeaturedtag">
-            @if (Model.Count == 0)
-            {
-                <h4 style="text-align:center" >No Search Results found</h4>
-            }
-            else
-            {
-                @foreach (var item in Model)
+
+        <div class="row">
+            <form class="col-md-4">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Document Type">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Study Tile">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Countries">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Language">
+                </div>
+
+                <input type="submit" class="btn btn-primary" value="Apply Filter" />
+            </form>
+            <div class="col-md">
+
+
+                @if (Model.Count == 0)
                 {
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-5 wrapthumbnail">
-                                <a asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId">
-                                    <div style="height: 260px; width: 200px;">
-                                        <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(item.ProjectIcon)" ; />
+                    <h4 style="text-align:center">No Search Results found</h4>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <div class="card" style="padding:4%; width:590px;height:200px; margin-bottom:5px; ">
+                            <div class="Card_container">
+                                <div>
+                                    <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId" style="width:0px">
+                                        <div style="height: 150px; width: 110px;">
+                                            @if (@item.ProjectIcon == null)
+                                            {
+                                                <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="https://www.kindpng.com/picc/m/86-865923_no-document-hd-png-download.png" alt="">
+
+                                            }
+                                            else
+                                            {
+                                                <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(item.ProjectIcon)" ; />
+
+                                            }
+
+
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="display: flex; flex-direction: column; justify-content: space-around;">
+                                    <div class="card-title">
+                                        <h4 style="font-size:13px">@item.DocumentType.DocumentTypeName</h4>
+                                        <a style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
+                                           asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId">@item.StudyTitle</a>
                                     </div>
-                                </a>
-                            </div>
-                            <div class="col-md-7">
-                                <div class="card-block">
-                                    <h2 class="card-title"><a asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId">@item.ProjectTitle</a></h2>
-                                    <h4 class="card-text">@item.ProjectSummary</h4>
-                                    <div class="metafooter">
-                                        <div class="wrapfooter">
-                                            <span class="meta-footer-thumb">
-                                                <a asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId">
-                                                </a>
-                                            </span>
-                                            <span class="author-meta">
-                                                <span class="post-name"><a>@item.Author</a></span><br />
-                                            </span>
-                                            <span class="post-read-more"><a asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId" title="Read Story"><svg class="svgIcon-use" width="25" height="25" viewbox="0 0 25 25"><path d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z" fill-rule="evenodd"></path></svg></a></span>
+
+                                    <div class="controls">
+                                        <div class="Calander">
+                                            <i class='bx bx-calendar'></i>
+                                            <p>@item.YearOfPublication</p>
+                                        </div>
+                                        <div class="Pages">
+                                            <i class='bx bx-spreadsheet'></i>
+                                            <p>@item.Authors</p>
+                                        </div>
+                                        <div class="Attach">
+                                            <i class='bx bx-paperclip'></i>
+                                            <p>@item.ProjectDocuments.Count Documents</p>
+                                        </div>
+                                        <div class="Languages">
+                                            <i class='bx bx-world'></i>
+                                            <p>@item.ProjectLanguages.Where(x => x.ProjectId == item.ProjectId).FirstOrDefault()</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-rows: auto 1fr; grid-gap:10%">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <i class='bx bx-dots-vertical-rounded' style="float:right;padding:2%; ">
+                                            <!-- menu -->
+                                            <div id="myDropdown" class="dropdown-content">
+                                                <a class="btn btn-warning"
+                                                   asp-controller="Category" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
+                                                <a class="btn btn-danger"
+                                                   asp-route-CategoryId="@item.DocumentTypeId"
+                                                   onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
+                                            </div>
+                                        </i>
+                                    }
+
+                                    <div style=" display: flex; flex-direction: column; justify-content:space-evenly ">
+                                        <div class="OverView">
+                                            <i style=" font-size: 24px; " class='bx bx-file-find'></i>
+                                            <p>Overview</p>
+                                        </div>
+                                        <div class="OverView">
+                                            <i class='bx bx-share-alt'></i>
+                                            <p>Share</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
 
                 }
 
-            }
 
 
-            <!-- end post -->
-
+            </div>
         </div>
+        
     </section>
-    <!-- End Featured
-    ================================================== -->
-    <!-- Begin List Posts
-    ================================================== -->
+    @*End Featured
+        ==================================================
+         Begin List Posts
+        ==================================================*@
 
 
 

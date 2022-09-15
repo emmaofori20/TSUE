@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
+using TSUE.Models.Data;
 
 namespace TSUE.Controllers
 {
@@ -26,8 +27,8 @@ namespace TSUE.Controllers
 
             if (!string.IsNullOrEmpty(searchText))
             {
-               var results = res.Where(x => x.ProjectTitle.ToLower().Contains(searchText.ToLower()) 
-                            || x.ProjectSummary.ToLower().Contains(searchText.ToLower())).ToList();
+               var results = res.Where(x => x.StudyTitle.ToLower().Contains(searchText.ToLower()) 
+                            || x.Overview.ToLower().Contains(searchText.ToLower())).ToList();
 
                 return View(results);
             }
@@ -36,8 +37,8 @@ namespace TSUE.Controllers
 
         public IActionResult ProjectComments(int ProjectId)
         {
-            var res = projectService.ProjectComments(ProjectId);
-            return View(res);
+            //var res = projectService.ProjectComments(ProjectId);
+            return View();
         }
 
         [HttpPost]
@@ -47,7 +48,7 @@ namespace TSUE.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    projectService.AddProjectComment(model);
+                    //projectService.AddProjectComment(model);
                     return RedirectToAction("ProjectComments", "Project", new{ ProjectId = model.ProjectId });
 
                 }
@@ -72,7 +73,7 @@ namespace TSUE.Controllers
         // GET: ProjectController/Create
         public ActionResult CreatePost()
         {
-            var res = projectService.SetProjectForCreate();
+            var res = projectService.SetProjectParametersToCreateProject();
             return View(res);
         }
 
@@ -85,9 +86,13 @@ namespace TSUE.Controllers
                 if (ModelState.IsValid)
                 {
                    var res = projectService.AddProject(model);
+                    return RedirectToAction("Index", "Project");
 
                 }
-                return RedirectToAction("Index","Home");
+                model.SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry;
+                model.SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType;
+                model.SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage;
+                return View(model);
             }
             catch(Exception err)
             {

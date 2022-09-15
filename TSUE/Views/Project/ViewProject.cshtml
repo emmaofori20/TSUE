@@ -1,4 +1,4 @@
-﻿@model Project
+﻿@*@model Project*@
 
 @{
     ViewData["Title"] = "Project";
@@ -6,11 +6,11 @@
 
 <!-- Begin Article
 ================================================== -->
-<div class="container">
+<!--<div class="container">
     <div class="row">
 
         <!-- Begin Fixed Left Share -->
-        <div class="col-md-2 col-xs-12">
+        <!--<div class="col-md-2 col-xs-12">
             <div class="share">
                 <p>
                     Share
@@ -41,32 +41,32 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div>-->
         <!-- End Fixed Left Share -->
         <!-- Begin Post -->
-        <div class="col-md-8 col-md-offset-2 col-xs-12">
-            <div class="mainheading">
+        <!--<div class="col-md-8 col-md-offset-2 col-xs-12">
+            <div class="mainheading">-->
 
                 <!-- Begin Top Meta -->
                 <!-- End Top Menta -->
 
-                <h1 class="posttitle">@Model.ProjectSummary</h1>
+                <!--<h1 class="posttitle">@Model.ProjectSummary</h1>
 
-            </div>
+            </div>-->
 
             <!-- Begin Featured Image -->
-            <img class="featured-image img-fluid" src="data:image;base64,@Convert.ToBase64String(Model.ProjectIcon)" alt="">
+            <!--<img class="featured-image img-fluid" src="data:image;base64,@Convert.ToBase64String(Model.ProjectIcon)" alt="">-->
             <!-- End Featured Image -->
             <!-- Begin Post Content -->
-            <div class="article-post">
+            <!--<div class="article-post">
                 <p>
                     @Html.Raw(@Model.ProjectDescription)
 
                 </p>
-            </div>
+            </div>-->
             <!-- End Post Content -->
 
-            @{
+            <!--@{
                 var strBase64 = Convert.ToBase64String(Model.ProjectFiles.FirstOrDefault().ProjectFile1);
                 var FileContent = string.Format("data:application/pdf;base64,{0}", strBase64);
 
@@ -75,17 +75,17 @@
                 <br /><br /><embed style="height: 1000px; width: 100%;" src="@FileContent" />
                 <br />
             </center>*@
-            }
+            }-->
             <!-- Begin Tags -->
-            <div class="after-post-tags">
+            <!--<div class="after-post-tags">
                 <ul class="tags">
                     <li><a target="_blank" href="@FileContent" >Download Documents</a></li>
                 </ul>
-            </div>
+            </div>-->
             <!-- End Tags -->
 
-        </div>
+        <!--</div>-->
         <!-- End Post -->
 
-    </div>
-</div>
+    <!--</div>
+</div>-->

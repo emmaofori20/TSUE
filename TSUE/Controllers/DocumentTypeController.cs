@@ -9,44 +9,44 @@ using TSUE.ViewModels;
 
 namespace TSUE.Controllers
 {
-    public class CategoryController : Controller
+    public class DocumentTypeController : Controller
     {
-        private readonly ICategoryService categoryservice;
+        private readonly IDocumentTypeService documentTypeService;
 
-        public CategoryController(ICategoryService categoryservice)
+        public DocumentTypeController(IDocumentTypeService documentTypeService)
         {
-            this.categoryservice = categoryservice;
+            this.documentTypeService = documentTypeService;
         }
         // GET: CategoryController
         public ActionResult Index()
         {
-            var res = categoryservice.GetAllCategories();
+            var res = documentTypeService.GetAllDocumentType();
             return View(res);
         }
 
-        public ActionResult CategoryProject(int CategoryId)
+        public ActionResult CategoryProject(int DocumentTypeId)
         {
-            ViewBag.CategoryName = categoryservice.GetCategory(CategoryId).CategoryName;
-            var res=categoryservice.GetProjectCategories(CategoryId);
+            //ViewBag.CategoryName = documentTypeService.GetCategory(DocumentTypeId).CategoryName;
+            var res=documentTypeService.GetProjectCategories(DocumentTypeId);
             return View(res);
         }
 
         // GET: CategoryController/Create
-        public ActionResult CreateCategory()
+        public ActionResult CreateDocumentType()
         {
             return View();
         }
 
         // POST: CategoryController/Create
         [HttpPost]
-        public ActionResult CreateCategory(CategoryViewModel model)
+        public ActionResult CreateDocumentType(DocumentTypeViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    categoryservice.AddCategory(model);
-                    return RedirectToAction("Index", "Category");
+                    documentTypeService.AddDocumentType(model);
+                    return RedirectToAction("Index", "DocumentType");
                 }
                 return View(model);
             }
@@ -57,28 +57,27 @@ namespace TSUE.Controllers
         }
 
         // GET: CategoryController/Edit/5
-        public ActionResult EditCategory(int CategoryId)
+        public ActionResult EditDocumentType(int DocumentTypeId)
         {
-            var results = categoryservice.GetCategory(CategoryId);
-            var Editcategory = new CategoryViewModel() { 
-                CategoryId =results.CategoryId,
-                CategoryDescription = results.CategoryDescription,
-                CategoryName = results.CategoryName,
-                CategoryImageFromDatabase = results.CategoryImage
+            var results = documentTypeService.GetDocumentType(DocumentTypeId);
+            var EditDocumentType = new DocumentTypeViewModel() { 
+                DocumentTypeId =results.DocumentTypeId,
+                DocumentTypeName = results.DocumentTypeName,
+                DocumentTypeImage = results.DocumentTypeIcon
             };
-            return View(Editcategory);
+            return View(EditDocumentType);
         }
 
         // POST: CategoryController/Edit/5
         [HttpPost]
-        public ActionResult EditCategory(int id, CategoryViewModel model)
+        public ActionResult EditDocumentType(int id, DocumentTypeViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    categoryservice.EditCategory(model);
-                    return RedirectToAction("Index", "Category");
+                    documentTypeService.EditDocumentType(model);
+                    return RedirectToAction("Index", "DocumentType");
                 }
                 return View(model);
             }
@@ -89,9 +88,9 @@ namespace TSUE.Controllers
         }
 
         // GET: CategoryController/Delete/5
-        public void DeleteCategory(int CategoryId)
+        public void DeleteDocumentType(int DocumentTypeId)
         {
-            categoryservice.DeleteCategory(CategoryId);
+            documentTypeService.DeleteDocumentType(DocumentTypeId);
         }
 
         // POST: CategoryController/Delete/5

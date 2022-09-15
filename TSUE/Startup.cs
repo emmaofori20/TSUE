@@ -40,6 +40,9 @@ namespace TSUE
                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<TSUEProjectDbContext>(options => options.UseSqlServer(
                   Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<BirdTsueDBContext>(options => options.UseSqlServer(
+                  Configuration.GetConnectionString("DefaultConnection1")));
+
 
             //services.AddIdentity<IdentityUser, IdentityRole>()
             //    .AddEntityFrameworkStores<TSUEProjectDbContext>();
@@ -101,7 +104,7 @@ namespace TSUE
 
             services.AddControllersWithViews();
             services.AddTransient<IProjectService, ProjectService>();
-            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IDocumentTypeService, DocumentTypeService>();
             services.AddTransient<IAnalyticService, AnalyticService>();
         }
 

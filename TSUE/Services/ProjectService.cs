@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TSUE.Models;
+using TSUE.Models.Data;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
 
@@ -15,117 +16,156 @@ namespace TSUE.Services
     public class ProjectService: IProjectService
     {
         private readonly TSUEProjectDbContext _context;
+        private readonly BirdTsueDBContext birdTsueDBContext;
 
-        public ProjectService(TSUEProjectDbContext context)
+        public ProjectService(TSUEProjectDbContext context, BirdTsueDBContext birdTsueDBContext)
         {
             this._context = context;
+            this.birdTsueDBContext = birdTsueDBContext;
         }
 
-        public Project AddProject(AddProjectViewModel model)
+       
+
+        public List<Models.Data.Project> GetAllProject()
         {
-            var newProject = new Project()
+            return birdTsueDBContext.Projects.Where(x=>x.IsDeleted == false)
+                .Include(x=>x.DocumentType)
+                .Include(x=>x.ProjectDocuments).ToList();
+        }
+
+        public Models.Project GetProject(int projectId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Models.Data.Project AddProject(AddProjectViewModel model)
+        {
+            var newProject = new Models.Data.Project()
             {
-                ProjectTitle = model.ProjectTitle,
-                ProjectDescription = model.ProjectDescription,
-                ProjectSummary = model.ProjectSummary,
+                StudyTitle = model.StudyTitle,
+                Overview = model.ProjectOverview,
                 CreatedBy = "Admin",
-                ProjectDate = model.ProjectDate,
+                YearOfPublication = model.ProjectDate,
+                DocumentTypeId = model.DocumentTypeId,
                 CreatedOn = DateTime.Now,
                 IsDeleted = false,
-                Author = model.Author,
-                ProjectIcon = UploadImage(model.ProjectIcon)
+                Authors = model.Author,
+                ProjectIcon = model.ProjectIcon == null? null : UploadImage(model.ProjectIcon)
 
             };
 
-            _context.Projects.Add(newProject);
-            _context.SaveChanges();
+            birdTsueDBContext.Projects.Add(newProject);
+            birdTsueDBContext.SaveChanges();
 
-            ProjectCategory newProjectCategory = new ProjectCategory()
+            ProjectLanguage newProjectLanguage = new ProjectLanguage()
             {
                 ProjectId = newProject.ProjectId,
-                CategoryId = model.ProjectCategoryId,
-                CreatedOn = DateTime.Now,
-                CreatedBy = "Admin",
+                LanguageId = model.LanguageId,
+                
             };
+            birdTsueDBContext.ProjectLanguages.Add(newProjectLanguage);
+            birdTsueDBContext.SaveChanges();
 
-            _context.ProjectCategories.Add(newProjectCategory);
-            _context.SaveChanges();
-
-            ProjectFile projectfile = new ProjectFile()
+            if(model.CountryId != 0)
             {
-                ProjectFile1 = UploadImage(model.ProjectFile),
-                ProjectId = newProject.ProjectId,
-                ProjectFileName = model.ProjectFile.FileName,
-                CreatedOn = DateTime.Now,
-                CreatedBy = "Admin",
+                ProjectCountry projectCountry = new ProjectCountry()
+                {
+                    CountryId = model.CountryId,
+                    ProjectId = newProject.ProjectId
+                };
+
+                birdTsueDBContext.ProjectCountries.Add(projectCountry);
+                birdTsueDBContext.SaveChanges();
+            }
+           
+
+            if(model.ProjectFile.Count != 0)
+            {
+                foreach (var item in model.ProjectFile)
+                {
+                    ProjectDocument projectfile = new ProjectDocument()
+                    {
+                        DocumentFile = UploadImage(item),
+                        ProjectId = newProject.ProjectId,
+                        DocumentName = item.FileName,
+                        CreatedOn = DateTime.Now,
+                        CreatedBy = "Admin",
 
 
-            };
-            _context.ProjectFiles.Add(projectfile);
-            _context.SaveChanges();
+                    };
+                    birdTsueDBContext.ProjectDocuments.Add(projectfile);
+                    birdTsueDBContext.SaveChanges();
+                }
+              
+            }
+
+           
 
             return newProject;
         }
 
-        public void AddProjectComment(ProjectCommentViewModel model)
+        //public void AddProjectComment(ProjectCommentViewModel model)
+        //{
+        //    var comment = new Comment()
+        //    {
+        //        Email = model.AddComment.Email,
+        //        Comment1 = model.AddComment.Message,
+        //        CommenterName = model.AddComment.FullName,
+        //        CreatedBy = model.AddComment.FullName,
+        //        CreatedOn = DateTime.Now,
+
+        //    };
+        //    _context.Comments.Add(comment);
+        //    _context.SaveChanges();
+
+        //    // Adding to projectComments table
+
+        //    var projectCommnet = new ProjectComment()
+        //    {
+        //        ProjectId = model.ProjectId,
+        //        CommentId = comment.CommentId
+        //    };
+
+        //    _context.ProjectComments.Add(projectCommnet);
+        //    _context.SaveChanges();
+        //}
+
+       
+
+        //public Project GetProject(int projectId)
+        //{
+        //    return _context.Projects.Include(x => x.ProjectFiles).Where(x => x.ProjectId == projectId).FirstOrDefault();
+        //}
+
+        //public ProjectCommentViewModel ProjectComments(int ProjectId)
+        //{
+        //    var results = new ProjectCommentViewModel()
+        //    {
+        //        ProjectId = ProjectId,
+        //        ProjectComment = _context.ProjectComments.Include(x => x.Comment)
+        //        .Where(x => x.ProjectId == ProjectId)
+        //        .ToList(),
+
+        //    };
+
+        //    return results;
+        //}
+
+
+        public AddProjectViewModel SetProjectParametersToCreateProject()
         {
-            var comment = new Comment()
+            var res = birdTsueDBContext.DocumentTypes.ToList();
+            var projectDocumentType = new AddProjectViewModel()
             {
-                Email = model.AddComment.Email,
-                Comment1 = model.AddComment.Message,
-                CommenterName = model.AddComment.FullName,
-                CreatedBy = model.AddComment.FullName,
-                CreatedOn = DateTime.Now,
-                
-            };
-            _context.Comments.Add(comment);
-            _context.SaveChanges();
-
-            //// Adding to projectComments table
-
-            var projectCommnet = new ProjectComment()
-            {
-                ProjectId = model.ProjectId,
-                CommentId = comment.CommentId
+                SelectLanguage = new SelectList(birdTsueDBContext.Languages
+                                    .Select(s => new { Id = s.LanguageId, Text = $"{s.LanguageName}" }), "Id", "Text"),
+                SelectCountry = new SelectList(birdTsueDBContext.Countries
+                                    .Select(s => new { Id = s.CountryId, Text = $"{s.CountryName}" }), "Id", "Text"),
+                SelectDocumentType = new SelectList(birdTsueDBContext.DocumentTypes.Where(X=>X.IsDeleted == false)
+                                    .Select(s => new { Id = s.DocumentTypeId, Text = $"{s.DocumentTypeName}" }), "Id", "Text"),
             };
 
-            _context.ProjectComments.Add(projectCommnet);
-            _context.SaveChanges();
-        }
-
-        public List<Project> GetAllProject()
-        {
-            return _context.Projects.Where(x => x.IsDeleted == false).ToList();
-        }
-
-        public Project GetProject(int projectId)
-        {
-            return _context.Projects.Include(x=>x.ProjectFiles).Where(x => x.ProjectId == projectId).FirstOrDefault();
-        }
-
-        public ProjectCommentViewModel ProjectComments(int ProjectId)
-        {
-            var results = new ProjectCommentViewModel()
-            {
-                ProjectId = ProjectId,
-                ProjectComment = _context.ProjectComments.Include(x => x.Comment)
-                .Where(x => x.ProjectId == ProjectId)
-                .ToList(),
-
-            };
-
-            return results;
-        }
-
-        public AddProjectViewModel SetProjectForCreate()
-        {
-            var res = _context.Categories.ToList();
-            var projectCategory = new AddProjectViewModel()
-            {
-                selectCategory = new SelectList(_context.Categories.Select( s => new { Id = s.CategoryId, Text = $"{s.CategoryName}" }), "Id", "Text"),
-            };
-
-            return projectCategory;
+            return projectDocumentType;
         }
 
         private byte[] UploadImage(IFormFile formFile)

@@ -1,4 +1,4 @@
-﻿@model CategoryViewModel
+﻿@model DocumentTypeViewModel
 
 @{
     if (User.Identity.IsAuthenticated)
@@ -9,28 +9,22 @@
     {
 
     }
-    ViewData["Title"] = "Create Category";
+    ViewData["Title"] = "Create DocumentType";
 }
 
-<form class="card-body" style="background-color:white; padding:2%" method="post" enctype="multipart/form-data" asp-controller="Category" asp-action="CreateCategory">
+<form class="card-body" style="background-color:white; padding:2%" method="post" enctype="multipart/form-data" asp-controller="DocumentType" asp-action="CreateDocumentType">
     <!-- Name input -->
     <div class="form-outline mb-4">
-        <label class="form-label">Category Name</label>
-        <input type="text" asp-for="CategoryName" class="form-control" />
-        <span asp-validation-for="CategoryImage" class="text-danger"></span>
-    </div>
-
-    <!-- Description input -->
-    <div class="form-outline mb-4">
-        <label class="form-label">Description</label>
-        <input type="text" asp-for="CategoryDescription" class="form-control" />
+        <label class="form-label">Document Type Name</label>
+        <input type="text" asp-for="DocumentTypeName" class="form-control" />
+        <span asp-validation-for="DocumentTypeName" class="text-danger"></span>
     </div>
 
     <!-- Image -->
     <div class="form-outline mb-4">
         <label>Upload Icon</label>
         <div class="custom-file">
-            <input type="file" id="imgInp" asp-for="CategoryImage" />
+            <input type="file" id="imgInp" asp-for="DocumentTypeIcon" />
             <img id="blah" src="#" style="height:70px;  width:70px" class="img-thumbnail" />
 
             <script>

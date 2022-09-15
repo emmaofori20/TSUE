@@ -1,6 +1,6 @@
-﻿@model List<Category>
+﻿@model List<DocumentType>
 
-@{     
+@{
 
     if (User.Identity.IsAuthenticated)
     {
@@ -10,11 +10,11 @@
     {
 
     }
-    ViewData["Title"] = "All Categories";
+    ViewData["Title"] = "All Document Type";
 }
 
 <style>
-   
+
     .dropdown {
         position: absolute;
         display: inline-block;
@@ -24,7 +24,7 @@
     .dropdown-content {
         display: none;
         position: absolute;
-        padding:2%;
+        padding: 2%;
         margin-top: 0px;
         background-color: #f9f9f9;
         min-width: 60px;
@@ -43,23 +43,24 @@
     .dropdown a:hover {
         background-color: #f1f1f1;
     }
-    i{
-        padding:2%;
+
+    i {
+        padding: 2%;
     }
-    i:hover  .dropdown-content{
-        color: blue;
-        display: block;
-    }
-   
+
+        i:hover .dropdown-content {
+            color: blue;
+            display: block;
+        }
 </style>
 
-<section class="featured-posts" >
+<section class="featured-posts">
     <div class="section-title">
         <h2>
-            <span>All Categories</span>
+            <span>All Document Types</span>
             @if (User.Identity.IsAuthenticated)
             {
-                <a class="btn btn-primary" asp-action="CreateCategory" asp-controller="Category" style="float:right">Add Category</a>
+                <a class="btn btn-primary" asp-action="CreateDocumentType" asp-controller="DocumentType" style="float:right">Add DocumentType</a>
 
             }
 
@@ -71,19 +72,19 @@
 
         @foreach (var item in Model)
         {
-            <div class="card">
-                <div class="row">
-                    <div class="col-md-5 wrapthumbnail">
-                        <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.CategoryId">
-                            <div style="height: 260px; width: 200px;">
-                                @if (@item.CategoryImage == null)
+            <div class="card" style="padding:2%; height:114px">
+                <div style="display:flex;">
+                    <div class="col-md-3">
+                        <a asp-controller="DocumentType" asp-action="CategoryProject" asp-route-CategoryId="@item.DocumentTypeId" style="width:0px">
+                            <div style="height: 100px; width: 80px;">
+                                @if (@item.DocumentTypeIcon == null)
                                 {
-                                    <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="assets/img/demopic/10.jpg" alt="">
+                                    <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="https://thumbs.dreamstime.com/z/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg" alt="">
 
                                 }
                                 else
                                 {
-                                    <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(item.CategoryImage)" ; />
+                                    <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(item.DocumentTypeIcon)" ; />
 
                                 }
 
@@ -92,41 +93,41 @@
                         </a>
                     </div>
                     <div class="col-md-7">
-
-                        <div class="card-block">
+                        <div class="">
                             <h2 class="card-title">
-                                <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.CategoryId">@item.CategoryName</a>
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <i class='bx bx-dots-vertical-rounded' style="float:right">
-                                        <!-- menu -->
-                                        <div id="myDropdown" class="dropdown-content">
-                                            <a class="btn btn-warning"
-                                               asp-controller="Category" asp-action="EditCategory" asp-route-CategoryId="@item.CategoryId">Edit</a>
-                                            <a class="btn btn-danger"
-                                               asp-route-CategoryId="@item.CategoryId"
-                                               onclick="return ConfirmDeleteForCategory(@item.CategoryId)">Delete</a>
-                                        </div>
-                                    </i>
-                                }
-
-
+                                <a asp-controller="DocumentType" asp-action="CategoryProject" asp-route-CategoryId="@item.DocumentTypeId">@item.DocumentTypeName</a>
                             </h2>
-                            
-                            <h4 class="card-text">@item.CategoryDescription</h4>
+
                             <div class="metafooter">
                                 <div class="wrapfooter">
                                     <span class="meta-footer-thumb">
-                                        <a href="author.html">
+                                        <a>
                                         </a>
                                     </span>
                                     <span class="author-meta">
-                                        <span class="post-name"><a>Bird-Project</a></span><br />
+                                        <span class="post-name"><a>B.I.R.D</a></span><br />
                                     </span>
-                                    <span class="post-read-more"><a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.CategoryId" title="Read Story"><svg class="svgIcon-use" width="25" height="25" viewbox="0 0 25 25"><path d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z" fill-rule="evenodd"></path></svg></a></span>
+                                    @*<span class="post-read-more"><a asp-controller="DocumentType" asp-action="CategoryProject" asp-route-CategoryId="@item.CategoryId" title="Read Story"><svg class="svgIcon-use" width="25" height="25" viewbox="0 0 25 25"><path d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z" fill-rule="evenodd"></path></svg></a></span>*@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-2">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <i class='bx bx-dots-vertical-rounded' style="float:right;padding:2%; ">
+                                <!-- menu -->
+                                <div id="myDropdown" class="dropdown-content">
+                                    <a class="btn btn-warning"
+                                       asp-controller="DocumentType" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
+                                    <a class="btn btn-danger"
+                                       asp-route-DocumentTypeId="@item.DocumentTypeId"
+                                       onclick="return ConfirmDeleteForDocumentType(@item.DocumentTypeId)">Delete</a>
+                                </div>
+                            </i>
+                        }
+
+                       
                     </div>
                 </div>
             </div>
@@ -166,10 +167,10 @@
     }
 
 
-    ////////Delete for Category//////////
+    ////////Delete for DocumentType//////////
     var object = { status: false, ele: null }
-    function ConfirmDeleteForCategory(ev) {
-        
+    function ConfirmDeleteForDocumentType(ev) {
+
         console.log("the id:", ev)
         if (object.status) { return true; };
         swal({
@@ -187,14 +188,14 @@
                 console.log("i am deleted");
 
                 $.ajax({
-                    url: "/Category/DeleteCategory",
+                    url: "/DocumentType/DeleteDocumentType",
                     dataType: 'html',
                     method: 'get',
-                    data: { 'CategoryId': ev },
+                    data: { 'DocumentTypeId': ev },
                     success: function (res) {
                         console.log('Sucess');
                         swal("Deleted!", "Your imaginary file has been deleted.", "success");
-                        window.location.href = "/Category/Index";
+                        window.location.href = "/DocumentType/Index";
                     },
                     error: function (err) {
                         console.log(err, "err");

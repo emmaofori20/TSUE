@@ -1,0 +1,33 @@
+﻿.Card_container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-gap: 10px;
+}
+
+.OverView {
+    display: flex; 
+    flex-direction: column; 
+    border: 1px solid #00000054; 
+    padding: 2%;
+    align-items: center;
+}
+
+    .OverView p {
+        font-size: 10px; margin-bottom: 0px;
+    }
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.Calander, .Pages, .Attach, .Languages{
+    display:flex;
+    grid-gap:5px;
+    align-items:center;
+}
+
+    .Calander p, .Pages p, .Attach p, .Languages p {
+        margin-bottom: 0;
+        width: 140px;
+        font-size: 12px;
+    }

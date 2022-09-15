@@ -19,39 +19,56 @@
         <div>
             <div>
                 <div>
-                    <label>Title</label>
-                    <input class="form-control" asp-for="@Model.ProjectTitle" />
+                    <label>Study Title <span class="text-danger">*</span></label>
+                    <input class="form-control" asp-for="@Model.StudyTitle" />
+                    <span class="text-danger" asp-validation-for="@Model.StudyTitle"></span>
                 </div>
                 <div>
-                    <label>Project Summary</label>
-                    <input class="form-control" asp-for="@Model.ProjectSummary" />
-                </div>
-                <div>
-                    <label>Body</label>
-                    <textarea id="editor" asp-for="@Model.ProjectDescription"></textarea>
+                    <label>Project Overview</label>
+                    <textarea id="editor" asp-for="@Model.ProjectOverview"></textarea>
                 </div>
                 <div class="row">
                     <div class="col-sm">
                         <div>
                             <label>Project Date</label>
-                            <input type="Date" asp-for="@Model.ProjectDate" class="form-control" />
+                            <input type="month" asp-for="@Model.ProjectDate" class="form-control" />
                         </div>
                     </div>
                     <div class="col-sm">
                         <div>
-                            <label>Category</label>
-                            <select class="form-control" asp-items="@Model.selectCategory" asp-for="@Model.ProjectCategoryId">
+                            <label>Select DocumentType <span class="text-danger">*</span></label>
+                            <select class="form-control" asp-items="@Model.SelectDocumentType" asp-for="@Model.DocumentTypeId">
                                 <option value="none" selected="">Select item</option>
-
                             </select>
+                            <span class="text-danger" asp-validation-for="@Model.DocumentTypeId"></span>
                         </div>
 
                     </div>
+                    <div class="col-sm">
+                        <div>
+                            <label>Select Country <span class="text-danger">*</span></label>
+                            <select class="form-control" asp-items="@Model.SelectCountry" asp-for="@Model.CountryId">
+                                <option value="none" selected="">Select item</option>
+                            </select>
+                            <span class="text-danger" asp-validation-for="CountryId"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div>
+                            <label>Select Language</label>
+                            <select class="form-control" asp-items="@Model.SelectLanguage" asp-for="@Model.LanguageId">
+                                <option value="none" selected="">Select item</option>
+                            </select>
+                        </div>
 
+
+                    </div>
                 </div>
                 <div>
-                    <label>Project Author</label>
+                    <label>Project Author <span class="text-danger">*</span> </label>
                     <input class="form-control" asp-for="@Model.Author" />
+                    <span class="text-danger" asp-validation-for="@Model.Author"></span>
+
                 </div>
                 <div style="padding-bottom:5%">
                     <label>Project Image</label>
@@ -73,8 +90,18 @@
             </div>
             <div>
                 <h3>Upload Reports</h3>
-                <input type="file" id="myPdf" asp-for="@Model.ProjectFile" /><br>
-                <canvas id="pdfViewer"style="height:500px!important" ></canvas>
+                <input type="file" id="myPdf" multiple asp-for="@Model.ProjectFile" /><br>
+                <table id="list" cellspacing="0px" cellpadding="20px" text-align="center">
+                    <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td>Action</td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -86,61 +113,35 @@
 </div>
 
 @section scripts{
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js" ></script>
     <script>
-        $('#editor').trumbowyg();
+       $('#editor').trumbowyg();
     </script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script>
         // Loaded via <script> tag, create shortcut to access PDF.js exports.
-        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        //var pdfjsLib = window['pdfjs-dist/build/pdf'];
         // The workerSrc property shall be specified.
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+        //pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
 
         $("#myPdf").on("change", function (e) {
-            var file = e.target.files[0]
-            if (file.type == "application/pdf") {
-                var fileReader = new FileReader();
-                fileReader.onload = function () {
-                    var pdfData = new Uint8Array(this.result);
-                    // Using DocumentInitParameters object to load binary data.
-                    var loadingTask = pdfjsLib.getDocument({ data: pdfData });
-                    loadingTask.promise.then(function (pdf) {
-                        console.log('PDF loaded');
+            console.log(e.target.files.length)
+            for (var i = 0; i < e.target.files.length; i++) {
+                var rows = "";
+                var file = e.target.files[i]
+                if (file.type == "application/pdf") {
+                    console.log(i, e.target.files[i])
 
-                        // Fetch the first page
-                        var pageNumber = 1;
-                        pdf.getPage(pageNumber).then(function (page) {
-                            console.log('Page loaded');
-
-                            var scale = 1.5;
-                            var viewport = page.getViewport({ scale: scale });
-
-                            // Prepare canvas using PDF page dimensions
-                            var canvas = $("#pdfViewer")[0];
-                            var context = canvas.getContext('2d');
-                            canvas.height = viewport.height;
-                            canvas.width = viewport.width;
-
-                            // Render PDF page into canvas context
-                            var renderContext = {
-                                canvasContext: context,
-                                viewport: viewport
-                            };
-                            var renderTask = page.render(renderContext);
-                            renderTask.promise.then(function () {
-                                console.log('Page rendered');
-                            });
-                        });
-                    }, function (reason) {
-                        // PDF loading error
-                        console.error(reason);
-                    });
-                };
-                fileReader.readAsArrayBuffer(file);
+                    rows += "<tr><td>" + e.target.files[i].name + "</td><td>" + "x" + "</td></tr>";
+                    $(rows).appendTo("#list tbody");
+                }
+                else {
+                    alert("The file Uploaded is not a pdf", e.target.files[i].name);
+                }
             }
+          
         });
     </script>
 }
