@@ -304,6 +304,28 @@ namespace TSUE.Services
             return birdTsueDBContext.ProjectDocuments.Where(x => x.ProjectDocumentId == DocumentId).FirstOrDefault();
         }
 
+        public void DeleteProject(int ProjectId)
+        {
 
+            Project project = birdTsueDBContext.Projects
+                .Include(x => x.ProjectDocuments)
+                .Include(x => x.DocumentType)
+                .Include(x => x.ProjectComments)
+                .Include(x => x.ProjectCountries)
+                .Include(x => x.ProjectLanguages)
+                .Include(x => x.ProjectSectors)
+                .Where(x => x.ProjectId == ProjectId).FirstOrDefault();
+            if (project != null)
+            {
+                project.IsDeleted = true;
+                project.UpdatedBy = "User";
+                project.UpdatedOn = DateTime.Now;
+            }
+
+            birdTsueDBContext.Projects.Update(project);
+            birdTsueDBContext.SaveChanges();
+        }
     }
+
+    
 }

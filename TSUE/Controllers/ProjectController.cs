@@ -151,25 +151,69 @@ namespace TSUE.Controllers
         }
 
         // GET: ProjectController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> UpdateProject(int ProjectId)
         {
-            return View();
-            //work on this
+            try
+            {
+                ViewBag.SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry;
+                ViewBag.SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType;
+                ViewBag.SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage;
+
+                var project = await projectService.GetProjectForUpdate(ProjectId);
+
+                
+                return View(project);
+            }
+            catch (Exception ex)
+            {
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
+            }
         }
 
         // POST: ProjectController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> UpdateProject(UpdateProjectViewModel model)
         {
             try
             {
+                var projectId = await projectService.UpdateProject(model);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
             }
+        }
+
+        public IActionResult DeleteProject(int ProjectId) 
+        {
+            try
+            {
+                projectService.DeleteProject(ProjectId);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
+            }
+
         }
 
     }

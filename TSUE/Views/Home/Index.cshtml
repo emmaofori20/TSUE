@@ -175,10 +175,10 @@
                                         <!-- menu -->
                                         <div id="myDropdown" class="dropdown-content">
                                             <a class="btn btn-warning"
-                                               asp-controller="DocumentType" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
+                                               asp-controller="Project" asp-action="UpdateProject" asp-route-ProjectId="@item.ProjectId">Edit</a>
                                             <a class="btn btn-danger"
-                                               asp-route-CategoryId="@item.DocumentTypeId"
-                                               onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
+                                               asp-route-ProjectId="@item.ProjectId"
+                                               onclick="return ConfirmDeleteForProject(@item.ProjectId)">Delete</a>
                                         </div>
                                     </i>
                                 }
@@ -213,3 +213,46 @@
 
 </div>
 <!-- /.container -->
+
+<script>
+    //Confirm Delete For Project
+    var object = { status: false, ele: null }
+    function ConfirmDeleteForProject(ev) {
+
+        console.log("the id:", ev)
+        if (object.status) { return true; };
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this record",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, delete it!",
+            closeOnConfirm: false
+        },
+            function () {
+                object.status = true;
+                object.ele = ev;
+                console.log("i am deleted");
+
+                $.ajax({
+                    url: "/Project/DeleteProject",
+                    dataType: 'html',
+                    method: 'get',
+                    data: { 'ProjectId': ev },
+                    success: function (res) {
+                        console.log('Sucess');
+                        swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                        window.location.href = "/Project/Index";
+                    },
+                    error: function (err) {
+                        console.log(err, "err");
+                        swal("Error!", "We could not access the server.", "error");
+                    }
+                });
+                object.ele.click();
+                swal("Deleted!", "This project has been deleted.", "success");
+            });
+        return false;
+    };
+</script>
