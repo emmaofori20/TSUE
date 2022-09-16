@@ -80,29 +80,29 @@ namespace TSUE.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddComments(ProjectAndCommentViewModel model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    projectService.AddProjectComment(model);
-                    return RedirectToAction("ViewProject", "Project", new{ ProjectId = model.ProjectId });
+        //public IActionResult AddComments(ProjectAndCommentViewModel model)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            projectService.AddProjectComment(model);
+        //            return RedirectToAction("ViewProject", "Project", new{ ProjectId = model.ProjectId });
 
-                }
-                var res = projectService.GetProject(model.ProjectId);
-                model.project = res;
-                model.ProjectComment = res.ProjectComments.ToList();
-                model.ProjectId = res.ProjectId;
-                return View("ViewProject",model);
+        //        }
+        //        var res = projectService.GetProject(model.ProjectId);
+        //        model.project = res;
+        //        model.ProjectComment = res.ProjectComments.ToList();
+        //        model.ProjectId = res.ProjectId;
+        //        return View("ViewProject",model);
 
-            }
-            catch (Exception ex)
-            {
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
         // GET: ProjectController/Details/5
         public ActionResult ViewProject(int ProjectId)
