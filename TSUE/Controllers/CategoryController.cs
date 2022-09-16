@@ -89,9 +89,9 @@ namespace TSUE.Controllers
         }
 
         // GET: CategoryController/Delete/5
-        public ActionResult Delete(int id)
+        public void DeleteCategory(int CategoryId)
         {
-            return View();
+            categoryservice.DeleteCategory(CategoryId);
         }
 
         // POST: CategoryController/Delete/5

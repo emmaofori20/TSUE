@@ -13,10 +13,12 @@ namespace TSUE.Controllers
     public class ProjectController : Controller
     {
         private readonly IProjectService projectService;
+        private readonly IAnalyticService analyticService;
 
-        public ProjectController(IProjectService projectService)
+        public ProjectController(IProjectService projectService, IAnalyticService analyticService)
         {
             this.projectService = projectService;
+            this.analyticService = analyticService;
         }
         // GET: ProjectController
         public ActionResult Index(string? searchText)
@@ -30,7 +32,7 @@ namespace TSUE.Controllers
 
                 return View(results);
             }
-            return View(res);
+            return View(res.ToList());
         }
 
         public IActionResult ProjectComments(int ProjectId)
@@ -68,6 +70,7 @@ namespace TSUE.Controllers
         public ActionResult ViewProject(int ProjectId)
         {
             var res = projectService.GetProject(ProjectId);
+            analyticService.AddMostVisitedProject(res.ProjectTitle, res.ProjectId);
             return View(res);
         }
 

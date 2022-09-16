@@ -1,6 +1,15 @@
 ﻿@model List<Category>
 
-@{
+@{     
+
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    }
+    else
+    {
+
+    }
     ViewData["Title"] = "All Categories";
 }
 
@@ -14,7 +23,8 @@
 
     .dropdown-content {
         display: none;
-        position: relative;
+        position: absolute;
+        padding:2%;
         margin-top: 0px;
         background-color: #f9f9f9;
         min-width: 60px;
@@ -43,11 +53,15 @@
    
 </style>
 
-<section class="featured-posts">
+<section class="featured-posts" >
     <div class="section-title">
         <h2>
             <span>All Categories</span>
-            <a class="btn btn-primary" asp-action="CreateCategory" asp-controller="Category" style="float:right">Add Category</a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a class="btn btn-primary" asp-action="CreateCategory" asp-controller="Category" style="float:right">Add Category</a>
+
+            }
 
         </h2>
 
@@ -81,16 +95,22 @@
 
                         <div class="card-block">
                             <h2 class="card-title">
-                                <a href="post.html">@item.CategoryName</a>
-                                <i class='fa fa-ellipsis-v' style="float:right">
-                                    <!-- menu -->
-                                    <div id="myDropdown" class="dropdown-content">
-                                        <a class="btn btn-warning" 
-                                           asp-controller="Category" asp-action="EditCategory"  asp-route-CategoryId="@item.CategoryId">Edit</a>
-                                        <a class="btn btn-danger">Delete</a>
-                                    </div>
-                                </i>
-                               
+                                <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.CategoryId">@item.CategoryName</a>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <i class='bx bx-dots-vertical-rounded' style="float:right">
+                                        <!-- menu -->
+                                        <div id="myDropdown" class="dropdown-content">
+                                            <a class="btn btn-warning"
+                                               asp-controller="Category" asp-action="EditCategory" asp-route-CategoryId="@item.CategoryId">Edit</a>
+                                            <a class="btn btn-danger"
+                                               asp-route-CategoryId="@item.CategoryId"
+                                               onclick="return ConfirmDeleteForCategory(@item.CategoryId)">Delete</a>
+                                        </div>
+                                    </i>
+                                }
+
+
                             </h2>
                             
                             <h4 class="card-text">@item.CategoryDescription</h4>
@@ -144,4 +164,47 @@
             }
         }
     }
+
+
+    ////////Delete for Category//////////
+    var object = { status: false, ele: null }
+    function ConfirmDeleteForCategory(ev) {
+        
+        console.log("the id:", ev)
+        if (object.status) { return true; };
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this record",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, delete it!",
+            closeOnConfirm: false
+        },
+            function () {
+                object.status = true;
+                object.ele = ev;
+                console.log("i am deleted");
+
+                $.ajax({
+                    url: "/Category/DeleteCategory",
+                    dataType: 'html',
+                    method: 'get',
+                    data: { 'CategoryId': ev },
+                    success: function (res) {
+                        console.log('Sucess');
+                        swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                        window.location.href = "/Category/Index";
+                    },
+                    error: function (err) {
+                        console.log(err, "err");
+                        swal("Error!", "We could not access the server.", "error");
+                    }
+                });
+                object.ele.click();
+                swal("Deleted!", "This project has been deleted.", "success");
+            });
+        return false;
+    };
+
 </script>

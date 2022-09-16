@@ -25,7 +25,7 @@ namespace TSUE.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index","Admin");
         }
 
         [HttpPost]
