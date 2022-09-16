@@ -154,7 +154,7 @@ namespace TSUE.Models.Data
 
                 entity.ToTable("ProjectComment");
 
-                entity.Property(e => e.CreatedBy).HasMaxLength(10);
+                entity.Property(e => e.CreatedBy).HasMaxLength(266);
 
                 entity.Property(e => e.CreatedOn).HasColumnType("datetime");
 

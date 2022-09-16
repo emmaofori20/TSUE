@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TSUE.Models;
+
 using TSUE.Models.Data;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
@@ -14,12 +14,10 @@ namespace TSUE.Services
 {
     public class DocumentTypeService: IDocumentTypeService
     {
-        private readonly TSUEProjectDbContext _context;
         private readonly BirdTsueDBContext birdTsueDBContext;
 
-        public DocumentTypeService(TSUEProjectDbContext context, BirdTsueDBContext birdTsueDBContext)
+        public DocumentTypeService( BirdTsueDBContext birdTsueDBContext)
         {
-            this._context = context;
             this.birdTsueDBContext = birdTsueDBContext;
         }
 
@@ -88,9 +86,9 @@ namespace TSUE.Services
             return birdTsueDBContext.DocumentTypes.Where(x => x.DocumentTypeId == DocumentTypeId).FirstOrDefault();
         }
 
-        public List<ProjectCategory> GetProjectCategories(int CategoryId)
+        public List<Project> GetProjectsBelongingToDocumentType(int DocumentTypeId)
         {
-            return _context.ProjectCategories.Include(x => x.Project).Where(x => x.CategoryId == CategoryId).ToList();
+            return birdTsueDBContext.Projects.Include(x => x.ProjectDocuments).Where(x => x.DocumentTypeId == DocumentTypeId).ToList();
         }
 
         private byte[] UploadImage(IFormFile formFile)

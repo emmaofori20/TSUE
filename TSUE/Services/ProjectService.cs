@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TSUE.Models;
 using TSUE.Models.Data;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
@@ -15,30 +14,34 @@ namespace TSUE.Services
 {
     public class ProjectService: IProjectService
     {
-        private readonly TSUEProjectDbContext _context;
         private readonly BirdTsueDBContext birdTsueDBContext;
 
-        public ProjectService(TSUEProjectDbContext context, BirdTsueDBContext birdTsueDBContext)
+        public ProjectService(BirdTsueDBContext birdTsueDBContext)
         {
-            this._context = context;
             this.birdTsueDBContext = birdTsueDBContext;
         }
 
-       
-
-        public List<Models.Data.Project> GetAllProject()
+        public List<Project> GetAllProject()
         {
             return birdTsueDBContext.Projects.Where(x=>x.IsDeleted == false)
                 .Include(x=>x.DocumentType)
-                .Include(x=>x.ProjectDocuments).ToList();
+                .Include(x=>x.ProjectDocuments)
+                .Include(x=>x.ProjectLanguages)
+                .Include(x=>x.ProjectCountries)
+                .ToList();
         }
 
-        public Models.Project GetProject(int projectId)
+        public Project GetProject(int projectId)
         {
-            throw new NotImplementedException();
+            return birdTsueDBContext.Projects.Where(x => x.ProjectId == projectId)
+                .Include(x => x.DocumentType)
+                .Include(x => x.ProjectDocuments)
+                .Include(x => x.ProjectLanguages)
+                .Include(x=> x.ProjectComments)
+                .Include(x => x.ProjectCountries).FirstOrDefault();
         }
 
-        public Models.Data.Project AddProject(AddProjectViewModel model)
+        public Project AddProject(AddProjectViewModel model)
         {
             var newProject = new Models.Data.Project()
             {
@@ -104,15 +107,17 @@ namespace TSUE.Services
             return newProject;
         }
 
-        //public void AddProjectComment(ProjectCommentViewModel model)
-        //{
-        //    var comment = new Comment()
-        //    {
-        //        Email = model.AddComment.Email,
-        //        Comment1 = model.AddComment.Message,
-        //        CommenterName = model.AddComment.FullName,
-        //        CreatedBy = model.AddComment.FullName,
-        //        CreatedOn = DateTime.Now,
+        public void AddProjectComment(ProjectAndCommentViewModel model)
+        {
+            var ProjectComment = new ProjectComment()
+            {
+               Message  = model.AddComment.Message,
+               Email = model.AddComment.Email,
+               ProjectId = model.ProjectId,
+               FullName = model.AddComment.FullName,
+               CreatedBy = model.AddComment.FullName,
+               CreatedOn = DateTime.Now
+            };
 
         //    };
         //    _context.Comments.Add(comment);
@@ -278,6 +283,22 @@ namespace TSUE.Services
             }
 
             return fileBytes;
+        }
+
+        public ProjectAndCommentViewModel ProjectComments(int ProjectId)
+        {
+            var projectcomment = new ProjectAndCommentViewModel
+            {
+                ProjectComment = birdTsueDBContext.ProjectComments.Where(x => x.ProjectId == ProjectId).ToList(),
+                ProjectId = ProjectId
+            };
+
+            return projectcomment;
+        }
+
+        public ProjectDocument GetProjectDocument(int DocumentId)
+        {
+            return birdTsueDBContext.ProjectDocuments.Where(x => x.ProjectDocumentId == DocumentId).FirstOrDefault();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using TSUE.Models.Data
-@model List<TSUE.Models.Data.Project>
+@model FilterFormAndProjectViewModel
 @{
     if (User.Identity.IsAuthenticated)
     {
@@ -59,33 +59,40 @@
     ================================================= -->
 <div class="container">
 
-    @*End Site Title
-        ==================================================
-         Begin Featured
-        ==================================================*@
     <section class="featured-posts">
         <div class="section-title">
             <h2>
                 <span>All Projects</span>
-                <a class="btn btn-primary" asp-action="CreatePost" asp-controller="Project" style="float:right">Create Project</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-primary" asp-action="CreatePost" asp-controller="Project" style="float:right">Create Project</a>
+
+                }
 
             </h2>
 
         </div>
-
         <div class="row">
-            <form class="col-md-4">
+            
+            <div id="divSearchStudent"></div>
+            <form class="col-md-4" method="post" asp-action="FilterProjectsBySpecificParmeters" asp-controller="Project">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Document Type">
+                    <select class="form-control" asp-items="@Model.SelectDocumentType" asp-for="DocumentTypeId">
+                        <option selected> Filter by Document Type </option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Study Tile">
+                    <input type="text" class="form-control" asp-for="StudyTitle" placeholder="Enter Study Tile">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Countries">
+                    <select class="form-control" asp-for="CountryId" asp-items="@Model.SelectCountry">
+                        <option selected> Filter By country </option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Language">
+                    <select class="form-control" asp-for="LanguageId" asp-items="@Model.SelectLanguage">
+                        <option selected> Filter By Language</option>
+                    </select>
                 </div>
 
                 <input type="submit" class="btn btn-primary" value="Apply Filter" />
@@ -177,19 +184,15 @@
                         </div>
                     }
 
-                }
-
-
-
             </div>
         </div>
-        
-    </section>
-    @*End Featured
-        ==================================================
-         Begin List Posts
-        ==================================================*@
 
+    </section>
 
 
 </div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    var data = $('form').serialize();
+    console.log(data);
+</script>

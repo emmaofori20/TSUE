@@ -1,0 +1,89 @@
+﻿@model FilterFormAndProjectViewModel
+
+
+@if (Model.projects.Count == 0)
+{
+    <h4 style="text-align:center">No Search Results found</h4>
+}
+else
+{
+    @foreach (var item in Model.projects)
+    {
+        <div class="card" style="padding:4%; width:590px;height:200px; margin-bottom:5px; ">
+            <div class="Card_container">
+                <div>
+                    <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId" style="width:0px">
+                        <div style="height: 150px; width: 110px;">
+                            @if (@item.ProjectIcon == null)
+                            {
+                                <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="https://www.kindpng.com/picc/m/86-865923_no-document-hd-png-download.png" alt="">
+
+                            }
+                            else
+                            {
+                                <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(item.ProjectIcon)" ; />
+
+                            }
+
+
+                        </div>
+                    </a>
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: space-around;">
+                    <div class="card-title">
+                        <h4 style="font-size:13px">@item.DocumentType.DocumentTypeName</h4>
+                        <a style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
+                           asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId">@item.StudyTitle</a>
+                    </div>
+
+                    <div class="controls">
+                        <div class="Calander">
+                            <i class='bx bx-calendar'></i>
+                            <p>@item.YearOfPublication</p>
+                        </div>
+                        <div class="Pages">
+                            <i class='bx bx-spreadsheet'></i>
+                            <p>@item.Authors</p>
+                        </div>
+                        <div class="Attach">
+                            <i class='bx bx-paperclip'></i>
+                            <p>@item.ProjectDocuments.Count Documents</p>
+                        </div>
+                        <div class="Languages">
+                            <i class='bx bx-world'></i>
+                            <p>@item.ProjectLanguages.FirstOrDefault().Language</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-rows: auto 1fr; grid-gap:10%">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <i class='bx bx-dots-vertical-rounded' style="float:right;padding:2%; ">
+                            <!-- menu -->
+                            <div id="myDropdown" class="dropdown-content">
+                                <a class="btn btn-warning"
+                                   asp-controller="Category" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
+                                <a class="btn btn-danger"
+                                   asp-route-CategoryId="@item.DocumentTypeId"
+                                   onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
+                            </div>
+                        </i>
+                    }
+
+                    <div style=" display: flex; flex-direction: column; justify-content:space-evenly ">
+                        <div class="OverView">
+                            <i style=" font-size: 24px; " class='bx bx-file-find'></i>
+                            <p>Overview</p>
+                        </div>
+                        <div class="OverView">
+                            <i class='bx bx-share-alt'></i>
+                            <p>Share</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+

@@ -24,36 +24,77 @@ namespace TSUE.Controllers
         // GET: ProjectController
         public ActionResult Index(string? searchText)
         {
-            var res = projectService.GetAllProject().OrderByDescending(x=>x.CreatedOn);
+            var filterformAndProject = new FilterFormAndProjectViewModel
+            {
+                projects = projectService.GetAllProject().OrderByDescending(x => x.CreatedOn).ToList(),
+                SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry,
+                SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType,
+                SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage,
+            };
 
             if (!string.IsNullOrEmpty(searchText))
             {
-               var results = res.Where(x => x.StudyTitle.ToLower().Contains(searchText.ToLower()) 
+               var results = filterformAndProject.projects.Where(x => x.StudyTitle.ToLower().Contains(searchText.ToLower()) 
                             || x.Overview.ToLower().Contains(searchText.ToLower())).ToList();
 
                 return View(results);
             }
-            return View(res.ToList());
+            return View(filterformAndProject);
         }
-
-        public IActionResult ProjectComments(int ProjectId)
+        public IActionResult FilterProjectsBySpecificParmeters(FilterFormAndProjectViewModel model)
         {
-            //var res = projectService.ProjectComments(ProjectId);
-            return View();
+            var allProjects = projectService.GetAllProject();
+
+            if(model.DocumentTypeId != 0 || model.CountryId != 0 ||
+                model.LanguageId != 0 || model.StudyTitle != null)
+            {
+
+                if (!string.IsNullOrEmpty(model.StudyTitle))
+                {
+                    var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
+                                               || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
+                                               || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId
+                                               || x.StudyTitle.ToLower().Contains(model.StudyTitle.ToLower())).ToList();
+                }
+                else
+                {
+                    var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
+                                               || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
+                                               || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId ).ToList();
+                }
+               
+
+
+            }
+
+            return PartialView("_AllProjectsPartialView");
+        }
+ 
+        public IActionResult DownloadProjectDocument(int DocumentId)
+        {
+            var result = projectService.GetProjectDocument(DocumentId);
+
+            var filedetails = result.DocumentFile;
+
+            return File(filedetails, "application/pdf");
         }
 
         [HttpPost]
-        public IActionResult AddComments(ProjectCommentViewModel model)
+        public IActionResult AddComments(ProjectAndCommentViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    //projectService.AddProjectComment(model);
-                    return RedirectToAction("ProjectComments", "Project", new{ ProjectId = model.ProjectId });
+                    projectService.AddProjectComment(model);
+                    return RedirectToAction("ViewProject", "Project", new{ ProjectId = model.ProjectId });
 
                 }
-                return RedirectToAction("ProjectComments", "Project", new { ProjectId = model.ProjectId });
+                var res = projectService.GetProject(model.ProjectId);
+                model.project = res;
+                model.ProjectComment = res.ProjectComments.ToList();
+                model.ProjectId = res.ProjectId;
+                return View("ViewProject",model);
 
             }
             catch (Exception ex)
@@ -66,9 +107,16 @@ namespace TSUE.Controllers
         // GET: ProjectController/Details/5
         public ActionResult ViewProject(int ProjectId)
         {
+
             var res = projectService.GetProject(ProjectId);
-            analyticService.AddMostVisitedProject(res.ProjectTitle, res.ProjectId);
-            return View(res);
+            var projectAndComment = new ProjectAndCommentViewModel
+            {
+                project = res,
+                ProjectComment = res.ProjectComments.ToList(),
+                ProjectId = res.ProjectId
+            };
+            analyticService.AddMostVisitedProject(res.StudyTitle, res.ProjectId);
+            return View(projectAndComment);
         }
 
         // GET: ProjectController/Create
@@ -103,61 +151,26 @@ namespace TSUE.Controllers
         }
 
         // GET: ProjectController/Edit/5
-        public async Task<IActionResult> UpdateProject(int ProjectId)
+        public ActionResult Edit(int id)
         {
-            ViewBag.SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry;
-            ViewBag.SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType;
-            ViewBag.SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage;
-            var project = await projectService.GetProjectForUpdate(ProjectId);
-            return View(project);
+            return View();
             //work on this
         }
 
         // POST: ProjectController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProject(UpdateProjectViewModel model,int ProjectId )
-        {
-            try
-            {
-
-                var resultId = await projectService.UpdateProject(model);
-
-
-                return RedirectToAction(nameof(Index), new { Id = resultId });
-            }
-            catch (Exception ex)
-            {
-                var errorViewModel = new ErrorViewModel()
-                {
-                    RequestId = ex.Message
-                };
-
-                return View("Error", errorViewModel);
-            }
-        }
-
-        // GET: ProjectController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-            
-        }
-
-        // POST: ProjectController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Edit(int id, IFormCollection collection)
         {
             try
             {
                 return RedirectToAction(nameof(Index));
-                //work on this
             }
             catch
             {
                 return View();
             }
         }
+
     }
 }
