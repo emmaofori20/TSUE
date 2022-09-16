@@ -24,10 +24,10 @@ namespace TSUE.Controllers
             return View(res);
         }
 
-        public ActionResult CategoryProject(int DocumentTypeId)
+        public ActionResult GetProjectsBelongingToDocumentType(int DocumentTypeId)
         {
-            //ViewBag.CategoryName = documentTypeService.GetCategory(DocumentTypeId).CategoryName;
-            var res=documentTypeService.GetProjectCategories(DocumentTypeId);
+            ViewBag.DocumentTypeName = documentTypeService.GetDocumentType(DocumentTypeId).DocumentTypeName;
+            var res=documentTypeService.GetProjectsBelongingToDocumentType(DocumentTypeId);
             return View(res);
         }
 

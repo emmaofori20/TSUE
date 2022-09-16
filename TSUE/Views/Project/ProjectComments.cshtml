@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-sm-5 col-md-6 col-12 pb-4">
                 <h1 style="color:black">Comments</h1>
-                @if (Model.ProjectComment.Count == 0)
+                @if (Model.ProjectComment.Count== 0)
                 {
                     <h4 style="color: black;text-align:center">Be the first to Comment 😊</h4>
                 }
@@ -21,10 +21,10 @@
                     foreach (var item in Model.ProjectComment)
                     {
                         <div class="comment mt-4 text-justify float-left">
-                            <h4>@item.Comment.CommenterName</h4>
-                            <span>-@item.Comment.CreatedOn</span>
+                            <h4>@item.FullName</h4>
+                            <span>-@item.CreatedOn</span>
                             <br>
-                            <p>@item.Comment.Comment1</p>
+                            <p>@item.Message</p>
                         </div>
                     }
                 }

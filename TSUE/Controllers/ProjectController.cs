@@ -23,22 +23,56 @@ namespace TSUE.Controllers
         // GET: ProjectController
         public ActionResult Index(string? searchText)
         {
-            var res = projectService.GetAllProject().OrderByDescending(x=>x.CreatedOn);
+            var filterformAndProject = new FilterFormAndProjectViewModel
+            {
+                projects = projectService.GetAllProject().OrderByDescending(x => x.CreatedOn).ToList(),
+                SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry,
+                SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType,
+                SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage,
+            };
 
             if (!string.IsNullOrEmpty(searchText))
             {
-               var results = res.Where(x => x.StudyTitle.ToLower().Contains(searchText.ToLower()) 
+               var results = filterformAndProject.projects.Where(x => x.StudyTitle.ToLower().Contains(searchText.ToLower()) 
                             || x.Overview.ToLower().Contains(searchText.ToLower())).ToList();
 
                 return View(results);
             }
-            return View(res.ToList());
+            return View(filterformAndProject);
         }
 
+        public IActionResult FilterProjectsBySpecificParmeters(FilterFormAndProjectViewModel model)
+        {
+            var allProjects = projectService.GetAllProject();
+
+            if(model.DocumentTypeId != 0 || model.CountryId != 0 ||
+                model.LanguageId != 0 || model.StudyTitle != null)
+            {
+
+                if (!string.IsNullOrEmpty(model.StudyTitle))
+                {
+                    var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
+                                               || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
+                                               || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId
+                                               || x.StudyTitle.ToLower().Contains(model.StudyTitle.ToLower())).ToList();
+                }
+                else
+                {
+                    var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
+                                               || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
+                                               || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId ).ToList();
+                }
+               
+
+
+            }
+
+            return PartialView("_AllProjectsPartialView");
+        }
         public IActionResult ProjectComments(int ProjectId)
         {
-            //var res = projectService.ProjectComments(ProjectId);
-            return View();
+            var res = projectService.ProjectComments(ProjectId);
+            return View(res);
         }
 
         [HttpPost]
@@ -66,7 +100,7 @@ namespace TSUE.Controllers
         public ActionResult ViewProject(int ProjectId)
         {
             var res = projectService.GetProject(ProjectId);
-            analyticService.AddMostVisitedProject(res.ProjectTitle, res.ProjectId);
+            //analyticService.AddMostVisitedProject(res.StudyTitle, res.ProjectId);
             return View(res);
         }
 

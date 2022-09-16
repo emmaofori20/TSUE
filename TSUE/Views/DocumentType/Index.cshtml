@@ -72,10 +72,10 @@
 
         @foreach (var item in Model)
         {
-            <div class="card" style="padding:2%; height:114px">
+            <div class="card" style="padding: 2%; color:white; height: 114px;background-color: #369036;">
                 <div style="display:flex;">
                     <div class="col-md-3">
-                        <a asp-controller="DocumentType" asp-action="CategoryProject" asp-route-CategoryId="@item.DocumentTypeId" style="width:0px">
+                        <a asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId" style="width:0px">
                             <div style="height: 100px; width: 80px;">
                                 @if (@item.DocumentTypeIcon == null)
                                 {
@@ -95,7 +95,7 @@
                     <div class="col-md-7">
                         <div class="">
                             <h2 class="card-title">
-                                <a asp-controller="DocumentType" asp-action="CategoryProject" asp-route-CategoryId="@item.DocumentTypeId">@item.DocumentTypeName</a>
+                                <a style="color:white" asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">@item.DocumentTypeName</a>
                             </h2>
 
                             <div class="metafooter">

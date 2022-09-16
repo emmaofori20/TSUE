@@ -24,18 +24,23 @@ namespace TSUE.Services
             this.birdTsueDBContext = birdTsueDBContext;
         }
 
-       
-
         public List<Models.Data.Project> GetAllProject()
         {
             return birdTsueDBContext.Projects.Where(x=>x.IsDeleted == false)
                 .Include(x=>x.DocumentType)
-                .Include(x=>x.ProjectDocuments).ToList();
+                .Include(x=>x.ProjectDocuments)
+                .Include(x=>x.ProjectLanguages)
+                .Include(x=>x.ProjectCountries)
+                .ToList();
         }
 
-        public Models.Project GetProject(int projectId)
+        public Models.Data.Project GetProject(int projectId)
         {
-            throw new NotImplementedException();
+            return birdTsueDBContext.Projects.Where(x => x.ProjectId == projectId)
+                .Include(x => x.DocumentType)
+                .Include(x => x.ProjectDocuments)
+                .Include(x => x.ProjectLanguages)
+                .Include(x => x.ProjectCountries).FirstOrDefault();
         }
 
         public Models.Data.Project AddProject(AddProjectViewModel model)
@@ -151,7 +156,6 @@ namespace TSUE.Services
         //    return results;
         //}
 
-
         public AddProjectViewModel SetProjectParametersToCreateProject()
         {
             var res = birdTsueDBContext.DocumentTypes.ToList();
@@ -179,6 +183,17 @@ namespace TSUE.Services
             }
 
             return fileBytes;
+        }
+
+        public ProjectCommentViewModel ProjectComments(int ProjectId)
+        {
+            var projectcomment = new ProjectCommentViewModel
+            {
+                ProjectComment = birdTsueDBContext.ProjectComments.Where(x => x.ProjectId == ProjectId).ToList(),
+                ProjectId = ProjectId
+            };
+
+            return projectcomment;
         }
     }
 }

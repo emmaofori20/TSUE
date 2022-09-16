@@ -26,69 +26,69 @@
 
             @foreach (var item in Model.documentType)
             {
-                <div class="card" style="padding:2%; height:114px">
-                    <div style="display:flex;">
-                        <div class="col-md-3">
-                            <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.DocumentTypeId" style="width:0px">
-                                <div style="height: 100px; width: 80px;">
-                                    @if (@item.DocumentTypeIcon == null)
-                                    {
-                                        <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="assets/img/demopic/10.jpg" alt="">
+                <a asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">
+                    <div  class="card" style="padding: 2%; height: 114px; background-color: #369036; color: white; ">
+                        <div style="display:flex;">
+                            <div class="col-md-3">
+                                <a asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId" style="width:0px; ">
+                                    <div style="height: 100px; width: 80px;">
+                                        @if (@item.DocumentTypeIcon == null)
+                                        {
+                                            <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="assets/img/demopic/10.jpg" alt="">
 
-                                    }
-                                    else
-                                    {
-                                        <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(item.DocumentTypeIcon)" ; />
+                                        }
+                                        else
+                                        {
+                                            <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%; background-color: #369036" src="data:image;base64,@Convert.ToBase64String(item.DocumentTypeIcon)" ; />
 
-                                    }
-
-
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="">
-                                <h2 class="card-title">
-                                    <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.DocumentTypeId">@item.DocumentTypeName</a>
+                                        }
 
 
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="">
+                                    <h2 class="card-title">
+                                        <a style="color: white" asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">@item.DocumentTypeName</a>
 
-                                </h2>
+                                    </h2>
 
-                                <div class="metafooter">
-                                    <div class="wrapfooter">
-                                        <span class="meta-footer-thumb">
-                                            <a>
-                                            </a>
-                                        </span>
-                                        <span class="author-meta">
-                                            <span class="post-name"><a>Bird-Project</a></span><br />
-                                        </span>
-                                        @*<span class="post-read-more"><a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.CategoryId" title="Read Story"><svg class="svgIcon-use" width="25" height="25" viewbox="0 0 25 25"><path d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z" fill-rule="evenodd"></path></svg></a></span>*@
+                                    <div class="metafooter">
+                                        <div class="wrapfooter">
+                                            <span class="meta-footer-thumb">
+                                                <a>
+                                                </a>
+                                            </span>
+                                            <span class="author-meta">
+                                                <span class="post-name"><a>Bird-Project</a></span><br />
+                                            </span>
+                                            @*<span class="post-read-more"><a asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-CategoryId="@item.CategoryId" title="Read Story"><svg class="svgIcon-use" width="25" height="25" viewbox="0 0 25 25"><path d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z" fill-rule="evenodd"></path></svg></a></span>*@
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <i class='bx bx-dots-vertical-rounded' style="float:right;padding:2%; ">
-                                    <!-- menu -->
-                                    <div id="myDropdown" class="dropdown-content">
-                                        <a class="btn btn-warning"
-                                           asp-controller="Category" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
-                                        <a class="btn btn-danger"
-                                           asp-route-CategoryId="@item.DocumentTypeId"
-                                           onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
-                                    </div>
-                                </i>
-                            }
+                            <div class="col-md-2">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <i class='bx bx-dots-vertical-rounded' style="float:right;padding:2%; ">
+                                        <!-- menu -->
+                                        <div id="myDropdown" class="dropdown-content">
+                                            <a class="btn btn-warning"
+                                               asp-controller="DocumentType" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
+                                            <a class="btn btn-danger"
+                                               asp-route-CategoryId="@item.DocumentTypeId"
+                                               onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
+                                        </div>
+                                    </i>
+                                }
 
 
+                            </div>
                         </div>
                     </div>
-                </div>
 
+                </a>
             }
 
             <!-- end post -->
@@ -101,7 +101,7 @@
     ================================================== -->
     <section class="recent-posts">
 
-        <a asp-controller="Category" asp-action="Index" class="btn btn-primary" style="float:right;">
+        <a asp-controller="DocumentType" asp-action="Index" class="btn btn-primary" style="float:right;">
             <div><span style="font-weight:400;">>>> </span>View All</div>
         </a>
 
@@ -116,7 +116,7 @@
 
             @if (Model.Projects.Count == 0)
             {
-                <h4 style="text-align:center">No Search Results found</h4>
+                <h4 style="text-align:center">No Data found</h4>
             }
             else
             {
@@ -125,7 +125,7 @@
                     <div class="card" style="padding:2%; width:539px;height:200px; margin-bottom:5px; ">
                         <div class="Card_container">
                             <div>
-                                <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId" style="width:0px">
+                                <a asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId" style="width:0px">
                                     <div style="height: 150px; width: 110px;">
                                         @if (@item.ProjectIcon == null)
                                         {
@@ -146,7 +146,7 @@
                                 <div class="card-title">
                                     <h4 style="font-size:13px">@item.DocumentType.DocumentTypeName</h4>
                                     <a style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
-                                       asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId">@item.StudyTitle</a>
+                                       asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId">@item.StudyTitle</a>
                                 </div>
 
                                 <div class="controls">
@@ -164,7 +164,7 @@
                                     </div>
                                     <div class="Languages">
                                         <i class='bx bx-world'></i>
-                                        <p>@item.ProjectLanguages.Where(x => x.ProjectId == item.ProjectId).FirstOrDefault()</p>
+                                        <p>@item.ProjectLanguages.FirstOrDefault().Language</p>
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +175,7 @@
                                         <!-- menu -->
                                         <div id="myDropdown" class="dropdown-content">
                                             <a class="btn btn-warning"
-                                               asp-controller="Category" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
+                                               asp-controller="DocumentType" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
                                             <a class="btn btn-danger"
                                                asp-route-CategoryId="@item.DocumentTypeId"
                                                onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
