@@ -17,6 +17,9 @@ namespace TSUE.Services.IServices
 
         public Project GetProject(int projectId);
 
+        public Task<UpdateProjectViewModel> GetProjectForUpdate(int projectId);
+        public Task<int> UpdateProject(UpdateProjectViewModel model);
+
         //public ProjectCommentViewModel ProjectComments(int ProjectId);
 
         //public void AddProjectComment(ProjectCommentViewModel model);

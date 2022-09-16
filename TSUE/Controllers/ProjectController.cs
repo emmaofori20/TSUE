@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
 using TSUE.Models.Data;
+using TSUE.Models;
 
 namespace TSUE.Controllers
 {
@@ -102,24 +103,37 @@ namespace TSUE.Controllers
         }
 
         // GET: ProjectController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> UpdateProject(int ProjectId)
         {
-            return View();
+            ViewBag.SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry;
+            ViewBag.SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType;
+            ViewBag.SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage;
+            var project = await projectService.GetProjectForUpdate(ProjectId);
+            return View(project);
             //work on this
         }
 
         // POST: ProjectController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> UpdateProject(UpdateProjectViewModel model,int ProjectId )
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                var resultId = await projectService.UpdateProject(model);
+
+
+                return RedirectToAction(nameof(Index), new { Id = resultId });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
             }
         }
 

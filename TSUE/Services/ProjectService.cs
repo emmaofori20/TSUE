@@ -45,7 +45,7 @@ namespace TSUE.Services
                 StudyTitle = model.StudyTitle,
                 Overview = model.ProjectOverview,
                 CreatedBy = "Admin",
-                YearOfPublication = model.ProjectDate,
+                YearOfPublication = model.YearOfPublication,
                 DocumentTypeId = model.DocumentTypeId,
                 CreatedOn = DateTime.Now,
                 IsDeleted = false,
@@ -130,7 +130,7 @@ namespace TSUE.Services
         //    _context.SaveChanges();
         //}
 
-       
+
 
         //public Project GetProject(int projectId)
         //{
@@ -150,6 +150,105 @@ namespace TSUE.Services
 
         //    return results;
         //}
+        public async Task<UpdateProjectViewModel> GetProjectForUpdate(int projectId)
+        {
+            var project = await birdTsueDBContext.Projects
+                .Include(x => x.ProjectDocuments)
+                .Include( x => x.DocumentType)
+                .Include(x => x.ProjectCountries)
+                .ThenInclude(x => x.Country)
+                .Include(x => x.ProjectLanguages)
+                .ThenInclude(x => x.Language)
+                .FirstOrDefaultAsync(x => x.ProjectId == projectId);
+            UpdateProjectViewModel updateProjectViewModel = new UpdateProjectViewModel()
+            {
+                ProjectId = project.ProjectId,
+                StudyTitle = project.StudyTitle,
+                ProjectOverview = project.Overview,
+                Authors = project.Authors,
+                IsDeleted = project.IsDeleted,
+                YearOfPublication = project.YearOfPublication,
+                ProjectIconByte = project.ProjectIcon,
+                DocumentTypeId = project.DocumentTypeId,
+                CountryId = project.ProjectCountries.FirstOrDefault(x => x.ProjectId == projectId).CountryId,                
+                LanguageId = project.ProjectLanguages.FirstOrDefault(x => x.ProjectId == projectId).LanguageId,
+                ProjectDocumentsForUpdate = project.ProjectDocuments.Select(x => new ProjectDocumentForUpdate
+                {
+                    ProjectDocumentId = x.ProjectDocumentId,
+                    ProjectId = project.ProjectId,
+                    ProjectDocumentName = x.DocumentName,
+                    ProjectDocumentByte = x.DocumentFile
+                }).ToList()
+            };
+
+            return updateProjectViewModel;
+        }
+
+        public async Task<int> UpdateProject(UpdateProjectViewModel model)
+        {
+            var project = await birdTsueDBContext.Projects
+                .Include(x => x.ProjectLanguages)
+                .ThenInclude(x => x.Language)
+                .Include(x => x.ProjectCountries)
+                .ThenInclude(x => x.Country)
+                .FirstOrDefaultAsync(x => x.ProjectId == model.ProjectId);
+            if (project != null)
+            {
+                project.ProjectId = model.ProjectId;
+                project.Overview = model.ProjectOverview;
+                project.StudyTitle = model.StudyTitle;
+                project.YearOfPublication = model.YearOfPublication;
+                project.ProjectIcon = model.ProjectIcon != null ? UploadImage(model.ProjectIcon) : project.ProjectIcon;
+                project.IsDeleted = false;
+                project.Authors = model.Authors;
+                project.UpdatedOn = DateTime.Now;
+                project.UpdatedBy = "Admin";
+                project.DocumentTypeId = model.DocumentTypeId;
+                
+                if(model.LanguageId != project.ProjectLanguages.FirstOrDefault().LanguageId)
+                {
+                    foreach (var item in project.ProjectLanguages)
+                    {
+                        item.LanguageId = model.LanguageId;
+                        item.ProjectId = model.ProjectId;
+                        birdTsueDBContext.ProjectLanguages.Update(item);
+                    }
+                }
+
+                if (model.CountryId != project.ProjectCountries.FirstOrDefault().CountryId)
+                {
+                    foreach (var item in project.ProjectCountries)
+                    {
+                        item.CountryId = model.CountryId;
+                        item.ProjectId = model.ProjectId;
+                        birdTsueDBContext.ProjectCountries.Update(item);
+                    }
+                }
+
+
+                
+
+                var projectDocuments = birdTsueDBContext.ProjectDocuments.Where(x => x.ProjectId == model.ProjectId).ToList();
+
+                foreach (var item in model.ProjectDocumentsForUpdate)
+                {
+                    var currentProjectFile = projectDocuments.Where(x => x.ProjectDocumentId == item.ProjectDocumentId).FirstOrDefault();
+
+                    if (item.ProjectDocumentFile != null)
+                    {
+                        currentProjectFile.DocumentFile = UploadImage(item.ProjectDocumentFile);
+                        birdTsueDBContext.ProjectDocuments.Update(currentProjectFile);
+
+                    }
+                };
+
+            };
+
+            birdTsueDBContext.Projects.Update(project);
+            birdTsueDBContext.SaveChanges();
+            return project.ProjectId;
+
+        }
 
 
         public AddProjectViewModel SetProjectParametersToCreateProject()

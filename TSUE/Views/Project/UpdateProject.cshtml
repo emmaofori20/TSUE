@@ -1,4 +1,4 @@
-﻿@model AddProjectViewModel
+﻿@model UpdateProjectViewModel
 @{
     if (User.Identity.IsAuthenticated)
     {
@@ -8,16 +8,17 @@
     {
 
     }
-    ViewData["Title"] = "CreatePost";
+    ViewData["Title"] = "Update Project";
 }
 <link href="~/lib/Trumbowyg-main/Trumbowyg-main/dist/ui/trumbowyg.css" rel="stylesheet" />
 <div style="padding:2%; background-color:white">
-    <h1>Add New Project</h1>
+    <h1>Update Project</h1>
 
-    <form enctype="multipart/form-data" asp-action="CreatePost" method="post" asp-controller="Project">
+    <form enctype="multipart/form-data" asp-action="UpdateProject" method="post" asp-controller="Project" asp-route-ProjectId="@Model.ProjectId">
 
         <div>
             <div>
+                <input type="hidden" asp-for=@Model.ProjectId />
                 <div>
                     <label>Study Title <span class="text-danger">*</span></label>
                     <input class="form-control" asp-for="@Model.StudyTitle" />
@@ -37,8 +38,8 @@
                     <div class="col-sm">
                         <div>
                             <label>Select DocumentType <span class="text-danger">*</span></label>
-                            <select class="form-control" asp-items="@Model.SelectDocumentType" asp-for="@Model.DocumentTypeId">
-                                <option value="none" >Select Document Type...</option>
+                            <select class="form-control" asp-items="@ViewBag.SelectDocumentType" asp-for="@Model.DocumentTypeId">
+                                <option value="none">Select Document Type...</option>
                             </select>
                             <span class="text-danger" asp-validation-for="@Model.DocumentTypeId"></span>
                         </div>
@@ -47,7 +48,7 @@
                     <div class="col-sm">
                         <div>
                             <label>Select Country <span class="text-danger">*</span></label>
-                            <select class="form-control" asp-items="@Model.SelectCountry" asp-for="@Model.CountryId">
+                            <select class="form-control" asp-items="@ViewBag.SelectCountry" asp-for="@Model.CountryId">
                                 <option value="none">Select Country...</option>
                             </select>
                             <span class="text-danger" asp-validation-for="CountryId"></span>
@@ -56,8 +57,8 @@
                     <div class="col-sm">
                         <div>
                             <label>Select Language</label>
-                            <select class="form-control" asp-items="@Model.SelectLanguage" asp-for="@Model.LanguageId">
-                                <option value="none" >Select Language...</option>
+                            <select class="form-control" asp-items="@ViewBag.SelectLanguage" asp-for="@Model.LanguageId">
+                                <option value="none">Select Language...</option>
                             </select>
                         </div>
 
@@ -66,31 +67,30 @@
                 </div>
                 <div>
                     <label>Project Author <span class="text-danger">*</span> </label>
-                    <input class="form-control" asp-for="@Model.Author" />
-                    <span class="text-danger" asp-validation-for="@Model.Author"></span>
+                    <input class="form-control" asp-for="@Model.Authors" />
+                    <span class="text-danger" asp-validation-for="@Model.Authors"></span>
 
                 </div>
                 <div style="padding-bottom:5%">
                     <label>Project Image</label>
                     <div class="custom-file">
-                        <input type="file" id="imgInp" asp-for="@Model.ProjectIcon" />
-                        <img id="blah" src="#" style="height:70px;  width:70px" class="img-thumbnail" />
+                        <input type="file" class="img-input" asp-for="@Model.ProjectIcon" data-preview-item="preview" />
+                        @if (Model.ProjectIconByte != null)
+                        {
+                            <img src="data:image;base64,@Convert.ToBase64String(Model.ProjectIconByte)" id="preview" class="img-fluid img-thumbnail" style="height: 70px;width:70px" alt="">
 
-                        <script>
-                            imgInp.onchange = evt => {
-                                const [file] = imgInp.files
-                                if (file) {
-                                    blah.src = URL.createObjectURL(file)
-                                }
-                            }
-                        </script>
+                        }
+                        else
+                        {
+                            <img src="~/images/noImageThumbnail.jpg" id="preview" class="img-fluid img-thumbnail" style="height: 70px;width:70px" alt="">
 
+                        }
                     </div>
                 </div>
             </div>
             <div>
                 <h3>Upload Reports</h3>
-                <input type="file" id="myPdf" multiple asp-for="@Model.ProjectFile" /><br>
+                <input type="file" id="myPdf" multiple asp-for="@Model.ProjectDocumentsForUpdate" /><br>
                 <table id="list" cellspacing="0px" cellpadding="20px" text-align="center">
                     <thead>
                         <tr>
@@ -115,9 +115,9 @@
 @section scripts{
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js" ></script>
+    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js"></script>
     <script>
-       $('#editor').trumbowyg();
+        $('#editor').trumbowyg();
     </script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script>
@@ -141,9 +141,41 @@
                     alert("The file Uploaded is not a pdf", e.target.files[i].name);
                 }
             }
-          
+
         });
+
+
+        function readURL(input) {
+
+            var previewitem = $(input).attr('data-preview-item');
+            //console.log(previewitem);
+            //console.log(input.files[0]);
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#' + previewitem).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                $('#preview').attr('src', '');
+            }
+        }
+
+        $(".img-input").change(function () {
+
+            readURL(this);
+        });
+
     </script>
 }
 
 
+@*<script>
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            blah.src = URL.createObjectURL(file)
+        }
+    }
+</script>*@

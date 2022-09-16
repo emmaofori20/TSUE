@@ -154,9 +154,9 @@
                                             <!-- menu -->
                                             <div id="myDropdown" class="dropdown-content">
                                                 <a class="btn btn-warning"
-                                                   asp-controller="Category" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
-                                                <a class="btn btn-danger"
-                                                   asp-route-CategoryId="@item.DocumentTypeId"
+                                                   asp-controller="Project" asp-action="UpdateProject" asp-route-ProjectId="@item.ProjectId">Edit</a>
+                                                <a class="btn btn-danger" asp-controller="Project" asp-action="DeleteProject"
+                                                   asp-route-ProjectId="@item.DocumentTypeId"
                                                    onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
                                             </div>
                                         </i>
