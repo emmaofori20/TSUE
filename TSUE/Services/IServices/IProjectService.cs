@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TSUE.Models;
 using TSUE.ViewModels;
 
@@ -20,5 +21,9 @@ namespace TSUE.Services.IServices
         public ProjectCommentViewModel ProjectComments(int ProjectId);
 
         public void AddProjectComment(ProjectCommentViewModel model);
+        public  Task<UpdateProjectViewModel> GetProjectForUpdate(int projectId);
+        public  Task<int> UpdateProject(UpdateProjectViewModel model);
+        public SelectList GetCategoryList();
+
     }
 }

@@ -1,0 +1,169 @@
+﻿@model UpdateProjectViewModel
+@{
+    ViewData["Title"] = "Update Project";
+}
+<link href="~/lib/Trumbowyg-main/Trumbowyg-main/dist/ui/trumbowyg.css" rel="stylesheet" />
+<div>
+    <h1>Update Project</h1>
+
+    <form enctype="multipart/form-data" asp-action="UpdateProject" method="post" asp-controller="Project">
+
+        <div>
+            <div>
+                <input type="hidden" asp-for="@Model.ProjectId" class="form-control" />
+                <div>
+                    <label>Title</label>
+                    <input class="form-control" asp-for="@Model.ProjectTitle" />
+                </div>
+                <div>
+                    <label>Project Summary</label>
+                    <input class="form-control" asp-for="@Model.ProjectSummary" />
+                </div>
+                <div>
+                    <label>Body</label>
+                    <textarea id="editor" asp-for="@Model.ProjectDescription"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div>
+                            <label>Project Date</label>
+                            <input type="Date" asp-for="@Model.ProjectDate" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div>
+                            <label>Category</label>
+                            <select class="form-control" asp-items="@ViewBag.Categories" asp-for="@Model.CategoryId">
+                                <option value="" selected="">Select Category...</option>
+
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div>
+                    <label>Project Author</label>
+                    <input class="form-control" asp-for="@Model.Author" />
+                </div>
+                <div style="padding-bottom:5%">
+                    <label>Project Image</label>
+                    <div class="custom-file">
+                        <input type="file" class="img-input" data-preview-item="preview" asp-for="@Model.ProjectIcon" /> 
+                            <img src="data:image;base64,@Convert.ToBase64String(Model.ProjectIconByte)" id="preview" style="height:70px;  width:70px" class="img-thumbnail" />
+                        
+                        @*<script>
+                            imgInp.onchange = evt => {
+                                const [file] = imgInp.files
+                                if (file) {
+                                    blah.src = URL.createObjectURL(file)
+                                }
+                            }
+                        </script>*@
+
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3>Upload Reports</h3>
+                <input type="file" id="myPdf" asp-for="@Model.ProjectFiles" /><br>
+                <canvas id="pdfViewer" style="height:500px!important"></canvas>
+            </div>
+        </div>
+
+        <div>
+            <button type="submit" class="btn  btn-primary"><i class="fa fa-floppy-o"></i>Submit</button>
+        </div>
+    </form>
+
+</div>
+
+@section scripts{
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js"></script>
+    <script>
+        $('#editor').trumbowyg();
+    </script>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    
+    
+    
+    <script>
+        // Loaded via <script> tag, create shortcut to access PDF.js exports.
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        // The workerSrc property shall be specified.
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+        $("#myPdf").on("change", function (e) {
+            var file = e.target.files[0]
+            if (file.type == "application/pdf") {
+                var fileReader = new FileReader();
+                fileReader.onload = function () {
+                    var pdfData = new Uint8Array(this.result);
+                    // Using DocumentInitParameters object to load binary data.
+                    var loadingTask = pdfjsLib.getDocument({ data: pdfData });
+                    loadingTask.promise.then(function (pdf) {
+                        console.log('PDF loaded');
+
+                        // Fetch the first page
+                        var pageNumber = 1;
+                        pdf.getPage(pageNumber).then(function (page) {
+                            console.log('Page loaded');
+
+                            var scale = 1.5;
+                            var viewport = page.getViewport({ scale: scale });
+
+                            // Prepare canvas using PDF page dimensions
+                            var canvas = $("#pdfViewer")[0];
+                            var context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            // Render PDF page into canvas context
+                            var renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            var renderTask = page.render(renderContext);
+                            renderTask.promise.then(function () {
+                                console.log('Page rendered');
+                            });
+                        });
+                    }, function (reason) {
+                        // PDF loading error
+                        console.error(reason);
+                    });
+                };
+                fileReader.readAsArrayBuffer(file);
+            }
+        });
+    </script>
+
+    <script>
+        function readURL(input) {
+
+            var previewitem = $(input).attr('data-preview-item');
+            //console.log(previewitem);
+            //console.log(input.files[0]);
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#' + previewitem).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                $('#preview').attr('src', '');
+            }
+        }
+
+        $(".img-input").change(function () {
+
+            readURL(this);
+        });
+    </script>
+
+}
+
+

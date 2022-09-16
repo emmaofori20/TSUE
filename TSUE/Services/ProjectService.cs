@@ -127,6 +127,78 @@ namespace TSUE.Services
             return projectCategory;
         }
 
+        public async Task<UpdateProjectViewModel> GetProjectForUpdate(int projectId)
+        {
+            var project = await _context.Projects
+                .Include(x => x.ProjectCategories)
+                .FirstOrDefaultAsync(x => x.ProjectId == projectId);
+            UpdateProjectViewModel updateProjectViewModel = new UpdateProjectViewModel()
+            {
+                ProjectId = project.ProjectId,
+                ProjectDate = project.ProjectDate,
+                ProjectTitle = project.ProjectTitle,
+                ProjectDescription = project.ProjectDescription,
+                ProjectSummary = project.ProjectSummary,
+                Author = project.Author,
+                IsDeleted = project.IsDeleted,
+                ProjectIconByte = project.ProjectIcon,
+                CategoryId = project.ProjectCategories.FirstOrDefault(x => x.ProjectId == projectId).CategoryId,
+                ProjectFiles = project.ProjectFiles.Select(x => new ProjectFileForUpdate
+                {
+                    ProjectFileId = x.ProjectFileId,
+                    ProjectId = project.ProjectId,
+                    ProjectFileName = x.ProjectFileName,
+                    ProjectFileByte = x.ProjectFile1 
+                }).ToList()
+            };
+
+            return updateProjectViewModel;
+        }
+
+
+        public async Task<int> UpdateProject(UpdateProjectViewModel model)
+        {
+            var project = await _context.Projects.FirstOrDefaultAsync(x => x.ProjectId == model.ProjectId);
+            if(project != null)
+            {
+                project.ProjectId = model.ProjectId;
+                project.ProjectDate = model.ProjectDate;
+                project.ProjectTitle = model.ProjectTitle;
+                project.ProjectSummary = model.ProjectSummary;
+                project.Author = model.Author;
+                project.IsDeleted = false;
+                project.ProjectIcon = model.ProjectIconByte != null ? model.ProjectIconByte : UploadImage(model.ProjectIcon);
+
+
+                _context.Projects.Update(project);
+
+                var projectFiles = _context.ProjectFiles.Where(x => x.ProjectId == model.ProjectId).ToList();
+
+                foreach (var item in model.ProjectFiles)
+                {
+                    var currentProjectFile = projectFiles.Where(x => x.ProjectFileId == item.ProjectFileId).FirstOrDefault();
+
+                    if (item.ProjectFile1 != null)
+                    {
+                        currentProjectFile.ProjectFile1 = UploadImage(item.ProjectFile1);
+                        _context.ProjectFiles.Update(currentProjectFile);
+
+                    }
+                };
+
+            };
+
+            _context.SaveChanges();
+            return project.ProjectId;
+
+        } 
+
+        public SelectList GetCategoryList()
+        {
+            return new SelectList(_context.ProjectCategories
+                .Select(s => new { Id = s.CategoryId, Text = $"{s.Category.CategoryName}" }), "Id", "Text");
+        }
+
         private byte[] UploadImage(IFormFile formFile)
         {
             byte[] fileBytes;
@@ -139,5 +211,7 @@ namespace TSUE.Services
 
             return fileBytes;
         }
+
+       
     }
 }

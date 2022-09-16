@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TSUE.Models;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
 
@@ -54,8 +55,12 @@ namespace TSUE.Controllers
             }
             catch (Exception ex)
             {
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
 
-                throw;
+                return View("Error", errorViewModel);
             }
         }
 
@@ -88,53 +93,69 @@ namespace TSUE.Controllers
             }
             catch(Exception err)
             {
-                var message=err.Message;
-                return View();
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = err.Message
+                };
+
+                return View("Error", errorViewModel);
             }
         }
 
         // GET: ProjectController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> UpdateProject(int projectId)
         {
-            return View();
-            //work on this
+            ViewBag.Categories = projectService.GetCategoryList();
+            var result = await projectService.GetProjectForUpdate(projectId);
+            return View(result);
         }
 
         // POST: ProjectController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> UpdateProject(UpdateProjectViewModel model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var resultId = await projectService.UpdateProject(model);
+                 return RedirectToAction(nameof(ViewProject), new { Id = resultId });
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
             }
         }
 
         // GET: ProjectController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
+        //public ActionResult Delete(int id)
+        //{
+        //    return View();
             
-        }
+        //}
 
         // POST: ProjectController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteProject(int projectId)
         {
             try
             {
                 return RedirectToAction(nameof(Index));
                 //work on this
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
             }
         }
     }
