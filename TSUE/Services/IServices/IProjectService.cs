@@ -9,16 +9,12 @@ namespace TSUE.Services.IServices
 {
     public interface IProjectService
     {
-        //public AddProjectViewModel SetProjectForCreate();
         public AddProjectViewModel SetProjectParametersToCreateProject();
         public Project AddProject(AddProjectViewModel model);
-
         public List<Project> GetAllProject();
-
         public Project GetProject(int projectId);
-
-        public ProjectCommentViewModel ProjectComments(int ProjectId);
-
-        //public void AddProjectComment(ProjectCommentViewModel model);
+        public ProjectDocument GetProjectDocument(int DocumentId);
+        public ProjectAndCommentViewModel ProjectComments(int ProjectId);
+        public void AddProjectComment(ProjectAndCommentViewModel model);
     }
 }

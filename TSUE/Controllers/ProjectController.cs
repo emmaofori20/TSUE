@@ -40,7 +40,6 @@ namespace TSUE.Controllers
             }
             return View(filterformAndProject);
         }
-
         public IActionResult FilterProjectsBySpecificParmeters(FilterFormAndProjectViewModel model)
         {
             var allProjects = projectService.GetAllProject();
@@ -69,24 +68,32 @@ namespace TSUE.Controllers
 
             return PartialView("_AllProjectsPartialView");
         }
-        public IActionResult ProjectComments(int ProjectId)
+ 
+        public IActionResult DownloadProjectDocument(int DocumentId)
         {
-            var res = projectService.ProjectComments(ProjectId);
-            return View(res);
+            var result = projectService.GetProjectDocument(DocumentId);
+
+            var filedetails = result.DocumentFile;
+
+            return File(filedetails, "application/pdf");
         }
 
         [HttpPost]
-        public IActionResult AddComments(ProjectCommentViewModel model)
+        public IActionResult AddComments(ProjectAndCommentViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    //projectService.AddProjectComment(model);
-                    return RedirectToAction("ProjectComments", "Project", new{ ProjectId = model.ProjectId });
+                    projectService.AddProjectComment(model);
+                    return RedirectToAction("ViewProject", "Project", new{ ProjectId = model.ProjectId });
 
                 }
-                return RedirectToAction("ProjectComments", "Project", new { ProjectId = model.ProjectId });
+                var res = projectService.GetProject(model.ProjectId);
+                model.project = res;
+                model.ProjectComment = res.ProjectComments.ToList();
+                model.ProjectId = res.ProjectId;
+                return View("ViewProject",model);
 
             }
             catch (Exception ex)
@@ -99,9 +106,16 @@ namespace TSUE.Controllers
         // GET: ProjectController/Details/5
         public ActionResult ViewProject(int ProjectId)
         {
+
             var res = projectService.GetProject(ProjectId);
-            //analyticService.AddMostVisitedProject(res.StudyTitle, res.ProjectId);
-            return View(res);
+            var projectAndComment = new ProjectAndCommentViewModel
+            {
+                project = res,
+                ProjectComment = res.ProjectComments.ToList(),
+                ProjectId = res.ProjectId
+            };
+            analyticService.AddMostVisitedProject(res.StudyTitle, res.ProjectId);
+            return View(projectAndComment);
         }
 
         // GET: ProjectController/Create
@@ -135,49 +149,5 @@ namespace TSUE.Controllers
             }
         }
 
-        // GET: ProjectController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-            //work on this
-        }
-
-        // POST: ProjectController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ProjectController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-            
-        }
-
-        // POST: ProjectController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-                //work on this
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

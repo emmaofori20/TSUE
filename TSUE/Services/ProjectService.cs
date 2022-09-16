@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TSUE.Models;
 using TSUE.Models.Data;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
@@ -15,16 +14,14 @@ namespace TSUE.Services
 {
     public class ProjectService: IProjectService
     {
-        private readonly TSUEProjectDbContext _context;
         private readonly BirdTsueDBContext birdTsueDBContext;
 
-        public ProjectService(TSUEProjectDbContext context, BirdTsueDBContext birdTsueDBContext)
+        public ProjectService(BirdTsueDBContext birdTsueDBContext)
         {
-            this._context = context;
             this.birdTsueDBContext = birdTsueDBContext;
         }
 
-        public List<Models.Data.Project> GetAllProject()
+        public List<Project> GetAllProject()
         {
             return birdTsueDBContext.Projects.Where(x=>x.IsDeleted == false)
                 .Include(x=>x.DocumentType)
@@ -34,16 +31,17 @@ namespace TSUE.Services
                 .ToList();
         }
 
-        public Models.Data.Project GetProject(int projectId)
+        public Project GetProject(int projectId)
         {
             return birdTsueDBContext.Projects.Where(x => x.ProjectId == projectId)
                 .Include(x => x.DocumentType)
                 .Include(x => x.ProjectDocuments)
                 .Include(x => x.ProjectLanguages)
+                .Include(x=> x.ProjectComments)
                 .Include(x => x.ProjectCountries).FirstOrDefault();
         }
 
-        public Models.Data.Project AddProject(AddProjectViewModel model)
+        public Project AddProject(AddProjectViewModel model)
         {
             var newProject = new Models.Data.Project()
             {
@@ -109,52 +107,21 @@ namespace TSUE.Services
             return newProject;
         }
 
-        //public void AddProjectComment(ProjectCommentViewModel model)
-        //{
-        //    var comment = new Comment()
-        //    {
-        //        Email = model.AddComment.Email,
-        //        Comment1 = model.AddComment.Message,
-        //        CommenterName = model.AddComment.FullName,
-        //        CreatedBy = model.AddComment.FullName,
-        //        CreatedOn = DateTime.Now,
+        public void AddProjectComment(ProjectAndCommentViewModel model)
+        {
+            var ProjectComment = new ProjectComment()
+            {
+               Message  = model.AddComment.Message,
+               Email = model.AddComment.Email,
+               ProjectId = model.ProjectId,
+               FullName = model.AddComment.FullName,
+               CreatedBy = model.AddComment.FullName,
+               CreatedOn = DateTime.Now
+            };
 
-        //    };
-        //    _context.Comments.Add(comment);
-        //    _context.SaveChanges();
-
-        //    // Adding to projectComments table
-
-        //    var projectCommnet = new ProjectComment()
-        //    {
-        //        ProjectId = model.ProjectId,
-        //        CommentId = comment.CommentId
-        //    };
-
-        //    _context.ProjectComments.Add(projectCommnet);
-        //    _context.SaveChanges();
-        //}
-
-       
-
-        //public Project GetProject(int projectId)
-        //{
-        //    return _context.Projects.Include(x => x.ProjectFiles).Where(x => x.ProjectId == projectId).FirstOrDefault();
-        //}
-
-        //public ProjectCommentViewModel ProjectComments(int ProjectId)
-        //{
-        //    var results = new ProjectCommentViewModel()
-        //    {
-        //        ProjectId = ProjectId,
-        //        ProjectComment = _context.ProjectComments.Include(x => x.Comment)
-        //        .Where(x => x.ProjectId == ProjectId)
-        //        .ToList(),
-
-        //    };
-
-        //    return results;
-        //}
+            birdTsueDBContext.ProjectComments.Add(ProjectComment);
+            birdTsueDBContext.SaveChanges();
+        }
 
         public AddProjectViewModel SetProjectParametersToCreateProject()
         {
@@ -185,15 +152,20 @@ namespace TSUE.Services
             return fileBytes;
         }
 
-        public ProjectCommentViewModel ProjectComments(int ProjectId)
+        public ProjectAndCommentViewModel ProjectComments(int ProjectId)
         {
-            var projectcomment = new ProjectCommentViewModel
+            var projectcomment = new ProjectAndCommentViewModel
             {
                 ProjectComment = birdTsueDBContext.ProjectComments.Where(x => x.ProjectId == ProjectId).ToList(),
                 ProjectId = ProjectId
             };
 
             return projectcomment;
+        }
+
+        public ProjectDocument GetProjectDocument(int DocumentId)
+        {
+            return birdTsueDBContext.ProjectDocuments.Where(x => x.ProjectDocumentId == DocumentId).FirstOrDefault();
         }
     }
 }
