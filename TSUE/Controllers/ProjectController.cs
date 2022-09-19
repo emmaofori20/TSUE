@@ -119,7 +119,7 @@ namespace TSUE.Controllers
         //}
 
         // GET: ProjectController/Details/5
-        public ActionResult ViewProject(int ProjectId)
+        public IActionResult ViewProject(int ProjectId)
         {
 
             var res = projectService.GetProject(ProjectId);

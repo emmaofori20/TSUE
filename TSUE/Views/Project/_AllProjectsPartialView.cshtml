@@ -16,7 +16,7 @@ else
                         <div style="height: 150px; width: 110px;">
                             @if (@item.ProjectIcon == null)
                             {
-                                <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="~/images/noImageThumbnail.jpg" alt="">
+                                <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="https://www.kindpng.com/picc/m/86-865923_no-document-hd-png-download.png" alt="">
 
                             }
                             else
@@ -31,9 +31,9 @@ else
                 </div>
                 <div style="display: flex; flex-direction: column; justify-content: space-around;">
                     <div class="card-title">
-                        <h4 style="font-size:13px">@item.DocumentType.DocumentTypeName</h4>
-                        <a style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
-                           asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId">@item.StudyTitle</a>
+                        <h4 style="font-size:13px; color:white">@item.DocumentType.DocumentTypeName</h4>
+                        <a style="color:white; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
+                           asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId">@item.StudyTitle</a>
                     </div>
 
                     <div class="controls">
@@ -58,14 +58,14 @@ else
                 <div style="display: grid; grid-template-rows: auto 1fr; grid-gap:10%">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <i class='bx bx-dots-vertical-rounded' style="float: right; padding: 2%; background: white; width: 19px; border-radius: 4px; ">
+                        <i class='bx bx-dots-vertical-rounded' style="float:right;padding:2%; width:20px; border-radius:4px; background:white ">
                             <!-- menu -->
                             <div id="myDropdown" class="dropdown-content">
                                 <a class="btn btn-warning"
-                                   asp-controller="Category" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
-                                <a class="btn btn-danger"
-                                   asp-route-CategoryId="@item.DocumentTypeId"
-                                   onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
+                                   asp-controller="Project" asp-action="UpdateProject" asp-route-ProjectId="@item.ProjectId">Edit</a>
+                                <a class="btn btn-danger" asp-controller="Project" asp-action="DeleteProject"
+                                   asp-route-ProjectId="@item.ProjectId"
+                                   onclick="return ConfirmDeleteForProject(@item.ProjectId)">Delete</a>
                             </div>
                         </i>
                     }
@@ -84,7 +84,6 @@ else
             </div>
         </div>
     }
-
 }
 
 <script>
