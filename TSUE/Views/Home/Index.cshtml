@@ -27,7 +27,7 @@
             @foreach (var item in Model.documentType)
             {
                 <a asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">
-                    <div  class="card" style="padding: 2%; height: 114px; background-color: #369036; color: white; ">
+                    <div  class="card" style="padding: 2%; height: 114px; background-color: #2E5F3B; color: white; ">
                         <div style="display:flex;">
                             <div class="col-md-3">
                                 <a asp-controller="DocumentType" asp-action="GetProjectsBelongingToDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId" style="width:0px; ">
@@ -101,7 +101,7 @@
     ================================================== -->
     <section class="recent-posts">
 
-        <a asp-controller="DocumentType" asp-action="Index" class="btn btn-primary" style="float:right;">
+        <a asp-controller="DocumentType" asp-action="Index" class="btn btn-success" style="float:right;">
             <div><span style="font-weight:400;">>>> </span>View All</div>
         </a>
 
@@ -144,8 +144,8 @@
                             </div>
                             <div style="display: flex; flex-direction: column; justify-content: space-around;">
                                 <div class="card-title">
-                                    <h4 style="font-size:13px">@item.DocumentType.DocumentTypeName</h4>
-                                    <a style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
+                                    <h4 style="font-size:13px; color:white">@item.DocumentType.DocumentTypeName</h4>
+                                    <a style="overflow: hidden; text-overflow: ellipsis; color:white; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
                                        asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId">@item.StudyTitle</a>
                                 </div>
 
@@ -205,7 +205,7 @@
     </section>
     <section class="recent-posts">
 
-        <a asp-controller="Project" asp-action="Index" class="btn btn-primary" style="float:right;">
+        <a asp-controller="Project" asp-action="Index" class="btn btn-success" style="float:right;">
             <div><span style="font-weight:400;">>>> </span>View All</div>
         </a>
 

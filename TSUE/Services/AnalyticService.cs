@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
-using TSUE.Models;
+using TSUE.Models.Data;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
 
@@ -10,26 +11,28 @@ namespace TSUE.Services
 {
     public class AnalyticService: IAnalyticService
     {
-        private readonly TSUEProjectDbContext _context;
+        private readonly BirdTsueDBContext birdTsueDBContext;
 
-        public AnalyticService(TSUEProjectDbContext context)
+        public AnalyticService(BirdTsueDBContext birdTsueDBContext)
         {
-            _context = context;
+            this.birdTsueDBContext = birdTsueDBContext;
         }
+        private static readonly HttpClient client = new HttpClient();
 
-        public void AddMostVisitedProject(string ResponseValue, int ProjectId)
+        public async Task AddMostVisitedProject(string ResponseValue, int ProjectId)
         {
+            await GetVisitorDetail();
             var AddAnalytics = new AnalyticTypeResponse()
             {
                 ResponseValue = ResponseValue,
-                CreatedAt = DateTime.Now,
+                CreatedOn = DateTime.Now,
                 CreatedBy = "VisitedUser",
-                AnalyticTypeId = 101,
+                AnalyticTypeId = 1,
                 ProjectId = ProjectId
             };
 
-            _context.AnalyticTypeResponses.Add(AddAnalytics);
-            _context.SaveChanges();
+            birdTsueDBContext.AnalyticTypeResponses.Add(AddAnalytics);
+            await birdTsueDBContext.SaveChangesAsync();
 
         }
 
@@ -37,13 +40,19 @@ namespace TSUE.Services
         {
             var AnalysisData = new AnalysisViewModel()
             {
-                TotalCategories = _context.Categories.Where(x => x.IsDeleted == false).Count(),
-                Totalprojects = _context.Projects.Where(x=>x.IsDeleted == false).Count(),
-                TotalVisits = _context.AnalyticTypeResponses.Count(),
-                Analysis = _context.AnalyticTypeResponses.ToList(),
+                TotalDocumentTypes = birdTsueDBContext.DocumentTypes.Where(x => x.IsDeleted == false).Count(),
+                Totalprojects = birdTsueDBContext.Projects.Where(x=>x.IsDeleted == false).Count(),
+                TotalVisits = birdTsueDBContext.AnalyticTypeResponses.Count(),
+                Analysis = birdTsueDBContext.AnalyticTypeResponses.ToList(),
             };
 
             return AnalysisData;
+        }
+
+        public static async Task GetVisitorDetail()
+        {
+            var getDetails = await client.GetAsync("ipinfo.io?token=852c5133673d5e");
+            Console.WriteLine(getDetails);
         }
     }
 }

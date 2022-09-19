@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TSUE.Models;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
 
@@ -39,6 +41,7 @@ namespace TSUE.Controllers
 
         // POST: CategoryController/Create
         [HttpPost]
+        [Authorize]
         public ActionResult CreateDocumentType(DocumentTypeViewModel model)
         {
             try
@@ -50,13 +53,18 @@ namespace TSUE.Controllers
                 }
                 return View(model);
             }
-            catch
+            catch(Exception err)
             {
-                return View();
+                var ErrorMessage = new ErrorViewModel()
+                {
+                    RequestId = err.Message
+                };
+                return View("Error", ErrorMessage);
             }
         }
 
         // GET: CategoryController/Edit/5
+
         public ActionResult EditDocumentType(int DocumentTypeId)
         {
             var results = documentTypeService.GetDocumentType(DocumentTypeId);
@@ -70,6 +78,7 @@ namespace TSUE.Controllers
 
         // POST: CategoryController/Edit/5
         [HttpPost]
+        [Authorize]
         public ActionResult EditDocumentType(int id, DocumentTypeViewModel model)
         {
             try
@@ -81,31 +90,35 @@ namespace TSUE.Controllers
                 }
                 return View(model);
             }
-            catch
+            catch(Exception err)
             {
-                return View();
+                var ErrorMessage = new ErrorViewModel()
+                {
+                    RequestId = err.Message
+                };
+                return View("Error", ErrorMessage);
             }
         }
 
         // GET: CategoryController/Delete/5
-        public void DeleteDocumentType(int DocumentTypeId)
-        {
-            documentTypeService.DeleteDocumentType(DocumentTypeId);
-        }
 
-        // POST: CategoryController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [Authorize]
+        public ActionResult DeleteDocumentType(int DocumentTypeId)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                documentTypeService.DeleteDocumentType(DocumentTypeId);
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception err)
             {
-                return View();
+                var ErrorMessage = new ErrorViewModel()
+                {
+                    RequestId = err.Message
+                };
+                return View("Error", ErrorMessage);
             }
         }
+
     }
 }

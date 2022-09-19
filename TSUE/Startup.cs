@@ -38,8 +38,8 @@ namespace TSUE
             services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(
                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDbContext<TSUEProjectDbContext>(options => options.UseSqlServer(
-                  Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<TSUEProjectDbContext>(options => options.UseSqlServer(
+            //      Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<BirdTsueDBContext>(options => options.UseSqlServer(
                   Configuration.GetConnectionString("DefaultConnection1")));
 

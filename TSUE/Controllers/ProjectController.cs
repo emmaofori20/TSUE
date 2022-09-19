@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using TSUE.Services.IServices;
 using TSUE.ViewModels;
 using TSUE.Models.Data;
+using Microsoft.AspNetCore.Authorization;
+using TSUE.Models;
 
 namespace TSUE.Controllers
 {
@@ -40,11 +42,21 @@ namespace TSUE.Controllers
             }
             return View(filterformAndProject);
         }
+
+        [HttpPost]
         public IActionResult FilterProjectsBySpecificParmeters(FilterFormAndProjectViewModel model)
         {
             var allProjects = projectService.GetAllProject();
 
-            if(model.DocumentTypeId != 0 || model.CountryId != 0 ||
+            var filterformAndProject = new FilterFormAndProjectViewModel
+            {
+                projects = allProjects,
+                SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry,
+                SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType,
+                SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage,
+            };
+
+            if (model.DocumentTypeId != 0 || model.CountryId != 0 ||
                 model.LanguageId != 0 || model.StudyTitle != null)
             {
 
@@ -54,21 +66,25 @@ namespace TSUE.Controllers
                                                || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
                                                || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId
                                                || x.StudyTitle.ToLower().Contains(model.StudyTitle.ToLower())).ToList();
+                    filterformAndProject.projects = results;
+                    return PartialView("_AllProjectsPartialView", filterformAndProject);
+
                 }
                 else
                 {
                     var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
                                                || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
                                                || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId ).ToList();
-                }
-               
+                    filterformAndProject.projects = results;
+                    return PartialView("_AllProjectsPartialView", filterformAndProject);
 
+                }
 
             }
+          
 
-            return PartialView("_AllProjectsPartialView");
+            return PartialView("_AllProjectsPartialView", filterformAndProject);
         }
- 
         public IActionResult DownloadProjectDocument(int DocumentId)
         {
             var result = projectService.GetProjectDocument(DocumentId);
@@ -77,7 +93,6 @@ namespace TSUE.Controllers
 
             return File(filedetails, "application/pdf");
         }
-
         [HttpPost]
         public IActionResult AddComments(ProjectAndCommentViewModel model)
         {
@@ -127,6 +142,7 @@ namespace TSUE.Controllers
 
         // POST: ProjectController/Create
         [HttpPost]
+        [Authorize]
         public ActionResult CreatePost(AddProjectViewModel model)
         {
             try
@@ -144,8 +160,11 @@ namespace TSUE.Controllers
             }
             catch(Exception err)
             {
-                var message=err.Message;
-                return View();
+                var ErrorMessage = new ErrorViewModel()
+                {
+                    RequestId = err.Message
+                };
+                return View("Error", ErrorMessage);
             }
         }
 
