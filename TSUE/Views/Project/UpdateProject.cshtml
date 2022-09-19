@@ -1,0 +1,181 @@
+﻿@model UpdateProjectViewModel
+@{
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    }
+    else
+    {
+
+    }
+    ViewData["Title"] = "Update Project";
+}
+<link href="~/lib/Trumbowyg-main/Trumbowyg-main/dist/ui/trumbowyg.css" rel="stylesheet" />
+<div style="padding:2%; background-color:white">
+    <h1>Update Project</h1>
+
+    <form enctype="multipart/form-data" asp-action="UpdateProject" method="post" asp-controller="Project" asp-route-ProjectId="@Model.ProjectId">
+
+        <div>
+            <div>
+                <input type="hidden" asp-for=@Model.ProjectId />
+                <div>
+                    <label>Study Title <span class="text-danger">*</span></label>
+                    <input class="form-control" asp-for="@Model.StudyTitle" />
+                    <span class="text-danger" asp-validation-for="@Model.StudyTitle"></span>
+                </div>
+                <div>
+                    <label>Project Overview</label>
+                    <textarea id="editor" asp-for="@Model.ProjectOverview"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div>
+                            <label>Year of Publication</label>
+                            <input type="date" asp-for="@Model.YearOfPublication" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div>
+                            <label>Select DocumentType <span class="text-danger">*</span></label>
+                            <select class="form-control" asp-items="@ViewBag.SelectDocumentType" asp-for="@Model.DocumentTypeId">
+                                <option value="none">Select Document Type...</option>
+                            </select>
+                            <span class="text-danger" asp-validation-for="@Model.DocumentTypeId"></span>
+                        </div>
+
+                    </div>
+                    <div class="col-sm">
+                        <div>
+                            <label>Select Country <span class="text-danger">*</span></label>
+                            <select class="form-control" asp-items="@ViewBag.SelectCountry" asp-for="@Model.CountryId">
+                                <option value="none">Select Country...</option>
+                            </select>
+                            <span class="text-danger" asp-validation-for="CountryId"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div>
+                            <label>Select Language</label>
+                            <select class="form-control" asp-items="@ViewBag.SelectLanguage" asp-for="@Model.LanguageId">
+                                <option value="none">Select Language...</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div>
+                    <label>Project Author <span class="text-danger">*</span> </label>
+                    <input class="form-control" asp-for="@Model.Authors" />
+                    <span class="text-danger" asp-validation-for="@Model.Authors"></span>
+
+                </div>
+                <div style="padding-bottom:5%">
+                    <label>Project Image</label>
+                    <div class="custom-file">
+                        <input type="file" class="img-input" asp-for="@Model.ProjectIcon" data-preview-item="preview" />
+                        @if (Model.ProjectIconByte != null)
+                        {
+                            <img src="data:image;base64,@Convert.ToBase64String(Model.ProjectIconByte)" id="preview" class="img-fluid img-thumbnail" style="height: 70px;width:70px" alt="">
+
+                        }
+                        else
+                        {
+                            <img src="~/images/noImageThumbnail.jpg" id="preview" class="img-fluid img-thumbnail" style="height: 70px;width:70px" alt="">
+
+                        }
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3>Upload Reports</h3>
+                <input type="file" id="myPdf" multiple asp-for="@Model.ProjectDocumentsForUpdate" /><br>
+                <table id="list" cellspacing="0px" cellpadding="20px" text-align="center">
+                    <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td>Action</td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            <button type="submit" class="btn  btn-primary"><i class="fa fa-floppy-o"></i> Submit </button>
+        </div>
+    </form>
+
+</div>
+
+@section scripts{
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js"></script>
+    <script>
+        $('#editor').trumbowyg();
+    </script>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <script>
+        // Loaded via <script> tag, create shortcut to access PDF.js exports.
+        //var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        // The workerSrc property shall be specified.
+        //pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+        $("#myPdf").on("change", function (e) {
+            console.log(e.target.files.length)
+            for (var i = 0; i < e.target.files.length; i++) {
+                var rows = "";
+                var file = e.target.files[i]
+                if (file.type == "application/pdf") {
+                    console.log(i, e.target.files[i])
+
+                    rows += "<tr><td>" + e.target.files[i].name + "</td><td>" + "x" + "</td></tr>";
+                    $(rows).appendTo("#list tbody");
+                }
+                else {
+                    alert("The file Uploaded is not a pdf", e.target.files[i].name);
+                }
+            }
+
+        });
+
+
+        function readURL(input) {
+
+            var previewitem = $(input).attr('data-preview-item');
+            //console.log(previewitem);
+            //console.log(input.files[0]);
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#' + previewitem).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                $('#preview').attr('src', '');
+            }
+        }
+
+        $(".img-input").change(function () {
+
+            readURL(this);
+        });
+
+    </script>
+}
+
+
+@*<script>
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            blah.src = URL.createObjectURL(file)
+        }
+    }
+</script>*@
