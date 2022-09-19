@@ -94,29 +94,29 @@ namespace TSUE.Controllers
             return File(filedetails, "application/pdf");
         }
         [HttpPost]
-        public IActionResult AddComments(ProjectAndCommentViewModel model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    projectService.AddProjectComment(model);
-                    return RedirectToAction("ViewProject", "Project", new{ ProjectId = model.ProjectId });
+        //public IActionResult AddComments(ProjectAndCommentViewModel model)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            projectService.AddProjectComment(model);
+        //            return RedirectToAction("ViewProject", "Project", new{ ProjectId = model.ProjectId });
 
-                }
-                var res = projectService.GetProject(model.ProjectId);
-                model.project = res;
-                model.ProjectComment = res.ProjectComments.ToList();
-                model.ProjectId = res.ProjectId;
-                return View("ViewProject",model);
+        //        }
+        //        var res = projectService.GetProject(model.ProjectId);
+        //        model.project = res;
+        //        model.ProjectComment = res.ProjectComments.ToList();
+        //        model.ProjectId = res.ProjectId;
+        //        return View("ViewProject",model);
 
-            }
-            catch (Exception ex)
-            {
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
         // GET: ProjectController/Details/5
         public ActionResult ViewProject(int ProjectId)
@@ -166,6 +166,72 @@ namespace TSUE.Controllers
                 };
                 return View("Error", ErrorMessage);
             }
+        }
+
+        // GET: ProjectController/Edit/5
+        public async Task<IActionResult> UpdateProject(int ProjectId)
+        {
+            try
+            {
+                ViewBag.SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry;
+                ViewBag.SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType;
+                ViewBag.SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage;
+
+                var project = await projectService.GetProjectForUpdate(ProjectId);
+
+                
+                return View(project);
+            }
+            catch (Exception ex)
+            {
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
+            }
+        }
+
+        // POST: ProjectController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProject(UpdateProjectViewModel model)
+        {
+            try
+            {
+                var projectId = await projectService.UpdateProject(model);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
+            }
+        }
+
+        public IActionResult DeleteProject(int ProjectId) 
+        {
+            try
+            {
+                projectService.DeleteProject(ProjectId);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                var errorViewModel = new ErrorViewModel()
+                {
+                    RequestId = ex.Message
+                };
+
+                return View("Error", errorViewModel);
+            }
+
         }
 
     }

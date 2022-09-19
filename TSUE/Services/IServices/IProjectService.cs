@@ -13,8 +13,15 @@ namespace TSUE.Services.IServices
         public Project AddProject(AddProjectViewModel model);
         public List<Project> GetAllProject();
         public Project GetProject(int projectId);
+
+        public Task<UpdateProjectViewModel> GetProjectForUpdate(int projectId);
+        public Task<int> UpdateProject(UpdateProjectViewModel model);
+
         public ProjectDocument GetProjectDocument(int DocumentId);
-        public ProjectAndCommentViewModel ProjectComments(int ProjectId);
-        public void AddProjectComment(ProjectAndCommentViewModel model);
+        public void DeleteProject(int ProjectId);
+
+        //public ProjectCommentViewModel ProjectComments(int ProjectId);
+
+        //public void AddProjectComment(ProjectCommentViewModel model);
     }
 }
