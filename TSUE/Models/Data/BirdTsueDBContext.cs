@@ -32,7 +32,7 @@ namespace TSUE.Models.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -67,10 +67,6 @@ namespace TSUE.Models.Data
                 entity.Property(e => e.CreatedBy).HasMaxLength(255);
 
                 entity.Property(e => e.CreatedOn).HasColumnType("datetime");
-
-                entity.Property(e => e.ResponseValue)
-                    .IsRequired()
-                    .HasMaxLength(255);
 
                 entity.Property(e => e.StateOrCity).HasMaxLength(255);
 

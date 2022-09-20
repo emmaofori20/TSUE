@@ -4,32 +4,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TSUE.Services.IServices;
+using TSUE.ViewModels;
 
 namespace TSUE.Controllers
 {
     public class AdminController : Controller
     {
         private readonly IAnalyticService analyticService;
+        private readonly IProjectService projectService;
 
-        public AdminController(IAnalyticService analyticService)
+        public AdminController(IAnalyticService analyticService, IProjectService projectService)
         {
             this.analyticService = analyticService;
+            this.projectService = projectService;
         }
         public IActionResult Index()
         {
             var response = analyticService.GetAnalysisData();
 
-            List<int> repartitions = new List<int>();
-            var TopProjects = response.Analysis.Select(x => x.ProjectId ).Distinct();      
-
-            foreach (var item in TopProjects )
+            List<MostvistedProjectGraph> repartitions = new List<MostvistedProjectGraph>();
+            var AllProjects = response.Analysis.Where(x => x.AnalyticTypeId == 1).ToList();
+            var TopProjects = AllProjects.Select(x => x.ResponseValue).Distinct();
+            foreach (var item in TopProjects)
             {
-                repartitions.Add(response.Analysis.Count(x => x.ProjectId == item));
+                repartitions.Add(
+                    new MostvistedProjectGraph { 
+                        NumberOfVisits = response.Analysis.Count(x => x.ResponseValue == item),
+                        projectName = projectService.GetProject((int)item).StudyTitle}
+                    );
             }
-
-            var rep = repartitions;
-            ViewBag.Projects = TopProjects;
-            ViewBag.Rep = repartitions.ToList();
+            ViewBag.Rep = repartitions.ToList().OrderByDescending(x=>x.NumberOfVisits).Take(10);
             return View(response);
         }
     }

@@ -62,7 +62,7 @@ namespace TSUE.Controllers
 
                 if (!string.IsNullOrEmpty(model.StudyTitle))
                 {
-                    var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
+                    var results = allProjects.FindAll(x => x.DocumentTypeId == model.DocumentTypeId
                                                || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
                                                || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId
                                                || x.StudyTitle.ToLower().Contains(model.StudyTitle.ToLower())).ToList();
@@ -72,9 +72,9 @@ namespace TSUE.Controllers
                 }
                 else
                 {
-                    var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
-                                               || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
-                                               || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId).ToList();
+                    var results = allProjects.FindAll(x => (model.DocumentTypeId == 0? true: x.DocumentTypeId == model.DocumentTypeId )
+                                               && (model.LanguageId == 0? true: x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId)
+                                               && (model.CountryId == 0?true: x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId)).ToList();
                     filterformAndProject.projects = results;
                     return PartialView("_AllProjectsPartialView", filterformAndProject);
 
@@ -133,8 +133,12 @@ namespace TSUE.Controllers
                 ProjectComment = res.ProjectComments.ToList(),
                 ProjectId = res.ProjectId
             };
-            analyticService.AddMostVisitedProject(res.StudyTitle, res.ProjectId);
             return View(projectAndComment);
+        }
+
+        public void MostVisitedProject(MostVistedPageViewModel model)
+        {
+            analyticService.AddMostVisitedProject(model);
         }
 
         // GET: ProjectController/Create

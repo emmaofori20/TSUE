@@ -8,7 +8,7 @@ namespace TSUE.Services.IServices
 {
     public interface IAnalyticService
     {
-        public Task AddMostVisitedProject(string ResponseValue, int ProjectId);
+        public Task AddMostVisitedProject(MostVistedPageViewModel model);
 
         public AnalysisViewModel GetAnalysisData();
     }

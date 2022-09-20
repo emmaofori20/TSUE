@@ -75,23 +75,23 @@
             </div>
             <div class="col-xl-3 col-lg-6">
                 <div class="card card-stats mb-4 mb-xl-0">
-                    <!--<div class="card-body">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <h5 class="card-title text-uppercase text-muted mb-0">Most Visited Project</h5>
-                                <span class="h2 font-weight-bold mb-0">49,65%</span>
+                                <h5 class="card-title text-uppercase text-muted mb-0"> Visited country</h5>
+                                <span class="h2 font-weight-bold mb-0">@Model.MostVistedCountry</span>
                             </div>
                             <div class="col-auto">
                                 <div class="icon icon-shape bg-info text-white rounded-circle shadow">
                                     <i class="fas fa-percent"></i>
                                 </div>
                             </div>
-                        </div>-->
+                        </div>
                         @*<p class="mt-3 mb-0 text-muted text-sm">
                             <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
                             <span class="text-nowrap">Since last month</span>
                         </p>*@
-                    <!--</div>-->
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,20 +113,23 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/lib/Chart.js/chart.min.js" ></script>
 
-    <script>
+<script>
     var RepArray = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.Rep))');
-    var Projects = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.Projects))');
-
-    console.log(RepArray, Projects);
-
-        var ctx = $("#bar_chart");
+    let NumberofVisit = [];
+    let ProjectName = [];
+    RepArray.forEach(o => {
+        NumberofVisit.push(o.numberOfVisits);
+        ProjectName.push(o.projectName.slice(0,50))
+    });
+    console.log(NumberofVisit, ProjectName)      
+    var ctx = $("#bar_chart");
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: Projects,
+            labels: ProjectName,
             datasets: [{
                 label: "Bar graph",
-                data: RepArray,
+                data: NumberofVisit,
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
             }]
@@ -136,4 +139,4 @@
             legend: { display: false }
         }
     });
-    </script>
+</script>

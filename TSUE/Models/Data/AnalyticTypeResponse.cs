@@ -9,8 +9,7 @@ namespace TSUE.Models.Data
     {
         public int AnalyticTypeResponseId { get; set; }
         public int AnalyticTypeId { get; set; }
-        public string ResponseValue { get; set; }
-        public int? ProjectId { get; set; }
+        public int? ResponseValue { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string CreatedBy { get; set; }
         public string Country { get; set; }
