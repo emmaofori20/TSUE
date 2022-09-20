@@ -164,8 +164,30 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
     $(document).ready(function () {
-        console.log("ready!");
-            $('.DownloadProjectDocument').on('click', function () {
+        var VisitorData;
+        $.get("https://ipinfo.io?token=852c5133673d5e", function (data, status) {
+            console.log(data)
+            VisitorData = data;
+            let visitorDetails = {
+                "ProjectId": @Model.ProjectId,
+                "Country": data.country,
+                "StateOrCity": data.city
+            }
+            $.ajax({
+                url: "/Project/MostVisitedProject",
+                dataType: 'html',
+                method: 'post',
+                data: { 'model': visitorDetails },
+                success: function (res) {
+                    console.log('Sucess');
+                },
+                error: function (err) {
+                    console.log(err, "err");
+                }
+            });
+            console.log(visitorDetails);
+        });
+        $('.DownloadProjectDocument').on('click', function () {
                 console.log("Document Clicked!");
 
                 var documentId = $(this).attr('data-docId');

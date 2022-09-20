@@ -114,6 +114,7 @@
     $('#myFormwithParameters').click(function () {
 
         var Formdata = $('#myFormParam').serializeArray();
+        console.log($('#myFormParam').serializeArray());
         Formdata.pop();// remove array last element
         let data = {}
         for (var i = 0; i < Formdata.length; i++) {
@@ -142,6 +143,5 @@
 
 
     });
-
 
 </script>

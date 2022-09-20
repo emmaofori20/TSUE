@@ -17,18 +17,17 @@ namespace TSUE.Services
         {
             this.birdTsueDBContext = birdTsueDBContext;
         }
-        private static readonly HttpClient client = new HttpClient();
 
-        public async Task AddMostVisitedProject(string ResponseValue, int ProjectId)
+        public async Task AddMostVisitedProject(MostVistedPageViewModel model)
         {
-            await GetVisitorDetail();
             var AddAnalytics = new AnalyticTypeResponse()
             {
-                ResponseValue = ResponseValue,
                 CreatedOn = DateTime.Now,
                 CreatedBy = "VisitedUser",
                 AnalyticTypeId = 1,
-                ProjectId = ProjectId
+                ResponseValue = model.ProjectId,
+                Country = model.Country,
+                StateOrCity = model.StateOrCity
             };
 
             birdTsueDBContext.AnalyticTypeResponses.Add(AddAnalytics);
@@ -43,16 +42,17 @@ namespace TSUE.Services
                 TotalDocumentTypes = birdTsueDBContext.DocumentTypes.Where(x => x.IsDeleted == false).Count(),
                 Totalprojects = birdTsueDBContext.Projects.Where(x=>x.IsDeleted == false).Count(),
                 TotalVisits = birdTsueDBContext.AnalyticTypeResponses.Count(),
-                Analysis = birdTsueDBContext.AnalyticTypeResponses.ToList(),
+                MostVistedCountry = birdTsueDBContext.AnalyticTypeResponses.Where(x=>x.AnalyticTypeId ==1)
+                                     .GroupBy(i => i.Country)
+                                     .OrderByDescending(gp => gp.Count())
+                                     .Take(1)
+                                     .Select(x => x.Key)
+                                     .FirstOrDefault(),
+            Analysis = birdTsueDBContext.AnalyticTypeResponses.ToList(),
             };
 
             return AnalysisData;
         }
 
-        public static async Task GetVisitorDetail()
-        {
-            var getDetails = await client.GetAsync("ipinfo.io?token=852c5133673d5e");
-            Console.WriteLine(getDetails);
-        }
     }
 }

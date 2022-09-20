@@ -11,6 +11,7 @@ namespace TSUE.ViewModels
         public int Totalprojects { get; set; }
         public int TotalDocumentTypes { get; set; }
         public int TotalVisits { get; set; }
+        public string MostVistedCountry { get; set; }
         public List<AnalyticTypeResponse> Analysis { get; set; }
     }
 }
