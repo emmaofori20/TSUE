@@ -184,10 +184,10 @@
                                 }
 
                                 <div style=" display: flex; flex-direction: column; justify-content:space-evenly ">
-                                    <div class="OverView">
+                                    <a asp-controller="Project" asp-action="ViewProject" asp-route-ProjectId="@item.ProjectId" class="OverView">
                                         <i style=" font-size: 24px; " class='bx bx-file-find'></i>
                                         <p>Overview</p>
-                                    </div>
+                                    </a>
                                     <div class="OverView">
                                         <i class='bx bx-share-alt'></i>
                                         <p>Share</p>

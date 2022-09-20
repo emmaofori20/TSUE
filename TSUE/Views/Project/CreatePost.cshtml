@@ -10,6 +10,8 @@
     }
     ViewData["Title"] = "CreatePost";
 }
+
+<link href="~/lib/select2/css/select2.css" rel="stylesheet" />
 <link href="~/lib/Trumbowyg-main/Trumbowyg-main/dist/ui/trumbowyg.css" rel="stylesheet" />
 <div style="padding:2%; background-color:white">
     <h1>Add New Project</h1>
@@ -38,7 +40,7 @@
                         <div>
                             <label>Select DocumentType <span class="text-danger">*</span></label>
                             <select class="form-control" asp-items="@Model.SelectDocumentType" asp-for="@Model.DocumentTypeId">
-                                <option value="none" >Select Document Type...</option>
+                                <option value="none">Select Document Type...</option>
                             </select>
                             <span class="text-danger" asp-validation-for="@Model.DocumentTypeId"></span>
                         </div>
@@ -46,9 +48,9 @@
                     </div>
                     <div class="col-sm">
                         <div>
-                            <label>Select Country <span class="text-danger">*</span></label>
-                            <select class="form-control" asp-items="@Model.SelectCountry" asp-for="@Model.CountryId">
-                                <option value="none">Select Country...</option>
+                            <label>Select Country(ies) <span class="text-danger">*</span></label>
+                            <select class="js-example-basic-multiple select2-selection--multiple " asp-items="@Model.SelectCountry" asp-for="@Model.CountryId" multiple="multiple">
+                                <option value="none">Select Country(ies)</option>
                             </select>
                             <span class="text-danger" asp-validation-for="CountryId"></span>
                         </div>
@@ -56,12 +58,10 @@
                     <div class="col-sm">
                         <div>
                             <label>Select Language</label>
-                            <select class="form-control" asp-items="@Model.SelectLanguage" asp-for="@Model.LanguageId">
-                                <option value="none" >Select Language...</option>
+                            <select  class="form-control" asp-items="@Model.SelectLanguage" asp-for="@Model.LanguageId">
+                                <option value="none">Select Language...</option>
                             </select>
                         </div>
-
-
                     </div>
                 </div>
                 <div>
@@ -115,17 +115,15 @@
 @section scripts{
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js" ></script>
+    <script src="~/lib/select2/js/select2.js" defer></script>
+    <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js"></script>
     <script>
-       $('#editor').trumbowyg();
+        $('#editor').trumbowyg();
+        $(document).ready(function () {
+            $('.js-example-basic-multiple').select2();
+        });
     </script>
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script>
-        // Loaded via <script> tag, create shortcut to access PDF.js exports.
-        //var pdfjsLib = window['pdfjs-dist/build/pdf'];
-        // The workerSrc property shall be specified.
-        //pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
-
         $("#myPdf").on("change", function (e) {
             console.log(e.target.files.length)
             for (var i = 0; i < e.target.files.length; i++) {
@@ -141,7 +139,7 @@
                     alert("The file Uploaded is not a pdf", e.target.files[i].name);
                 }
             }
-          
+
         });
     </script>
 }

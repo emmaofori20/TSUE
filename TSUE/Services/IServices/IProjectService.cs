@@ -22,6 +22,6 @@ namespace TSUE.Services.IServices
 
         //public ProjectCommentViewModel ProjectComments(int ProjectId);
 
-        //public void AddProjectComment(ProjectCommentViewModel model);
+        public void AddProjectComment(ProjectAndCommentViewModel model);
     }
 }

@@ -11,6 +11,8 @@
     padding: 2%;
     align-items: center;
     background:white;
+    color:black !important;
+
 }
 
     .OverView p {

@@ -35,8 +35,8 @@ namespace TSUE.Controllers
 
             if (!string.IsNullOrEmpty(searchText))
             {
-               var results = filterformAndProject.projects.Where(x => x.StudyTitle.ToLower().Contains(searchText.ToLower()) 
-                            || x.Overview.ToLower().Contains(searchText.ToLower())).ToList();
+                var results = filterformAndProject.projects.Where(x => x.StudyTitle.ToLower().Contains(searchText.ToLower())
+                             || x.Overview.ToLower().Contains(searchText.ToLower())).ToList();
 
                 return View(results);
             }
@@ -74,14 +74,14 @@ namespace TSUE.Controllers
                 {
                     var results = allProjects.Where(x => x.DocumentTypeId == model.DocumentTypeId
                                                || x.ProjectLanguages.FirstOrDefault().LanguageId == model.LanguageId
-                                               || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId ).ToList();
+                                               || x.ProjectCountries.FirstOrDefault().CountryId == model.CountryId).ToList();
                     filterformAndProject.projects = results;
                     return PartialView("_AllProjectsPartialView", filterformAndProject);
 
                 }
 
             }
-          
+
 
             return PartialView("_AllProjectsPartialView", filterformAndProject);
         }
@@ -94,31 +94,35 @@ namespace TSUE.Controllers
             return File(filedetails, "application/pdf");
         }
         [HttpPost]
-        //public IActionResult AddComments(ProjectAndCommentViewModel model)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            projectService.AddProjectComment(model);
-        //            return RedirectToAction("ViewProject", "Project", new{ ProjectId = model.ProjectId });
+        public IActionResult AddComments(ProjectAndCommentViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    projectService.AddProjectComment(model);
+                    return RedirectToAction("ViewProject", "Project", new { ProjectId = model.ProjectId });
 
-        //        }
-        //        var res = projectService.GetProject(model.ProjectId);
-        //        model.project = res;
-        //        model.ProjectComment = res.ProjectComments.ToList();
-        //        model.ProjectId = res.ProjectId;
-        //        return View("ViewProject",model);
+                }
+                var res = projectService.GetProject(model.ProjectId);
+                model.project = res;
+                model.ProjectComment = res.ProjectComments.ToList();
+                model.ProjectId = res.ProjectId;
+                return View("ViewProject", model);
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        throw;
-        //    }
-        //}
+            }
+            catch (Exception err)
+            {
+                var ErrorMessage = new ErrorViewModel()
+                {
+                    RequestId = err.Message
+                };
+                return View("Error", ErrorMessage);
+            }
+        }
 
         // GET: ProjectController/Details/5
+        [HttpGet]
         public IActionResult ViewProject(int ProjectId)
         {
 

@@ -45,7 +45,7 @@ namespace TSUE.Services
 
         public Project AddProject(AddProjectViewModel model)
         {
-            var newProject = new Models.Data.Project()
+            var newProject = new Project()
             {
                 StudyTitle = model.StudyTitle,
                 Overview = model.ProjectOverview,
@@ -72,16 +72,20 @@ namespace TSUE.Services
             birdTsueDBContext.ProjectLanguages.Add(newProjectLanguage);
             birdTsueDBContext.SaveChanges();
 
-            if (model.CountryId != 0)
+            if (model.CountryId.Count != 0)
             {
-                ProjectCountry projectCountry = new ProjectCountry()
+                foreach (var item in model.CountryId)
                 {
-                    CountryId = model.CountryId,
-                    ProjectId = newProject.ProjectId
-                };
+                    ProjectCountry projectCountry = new ProjectCountry()
+                    {
+                        CountryId = item,
+                        ProjectId = newProject.ProjectId
+                    };
 
-                birdTsueDBContext.ProjectCountries.Add(projectCountry);
-                birdTsueDBContext.SaveChanges();
+                    birdTsueDBContext.ProjectCountries.Add(projectCountry);
+                    birdTsueDBContext.SaveChanges();
+                }
+              
             }
 
 
@@ -122,42 +126,10 @@ namespace TSUE.Services
                 CreatedOn = DateTime.Now
             };
 
-            //    };
-            //    _context.Comments.Add(comment);
-            //    _context.SaveChanges();
-
-            //    // Adding to projectComments table
-
-            //    var projectCommnet = new ProjectComment()
-            //    {
-            //        ProjectId = model.ProjectId,
-            //        CommentId = comment.CommentId
-            //    };
-
-            //    _context.ProjectComments.Add(projectCommnet);
-            //    _context.SaveChanges();
+            birdTsueDBContext.ProjectComments.Add(ProjectComment);
+            birdTsueDBContext.SaveChanges();
         }
 
-
-
-        //public Project GetProject(int projectId)
-        //{
-        //    return _context.Projects.Include(x => x.ProjectFiles).Where(x => x.ProjectId == projectId).FirstOrDefault();
-        //}
-
-        //public ProjectCommentViewModel ProjectComments(int ProjectId)
-        //{
-        //    var results = new ProjectCommentViewModel()
-        //    {
-        //        ProjectId = ProjectId,
-        //        ProjectComment = _context.ProjectComments.Include(x => x.Comment)
-        //        .Where(x => x.ProjectId == ProjectId)
-        //        .ToList(),
-
-        //    };
-
-        //    return results;
-        //}
         public async Task<UpdateProjectViewModel> GetProjectForUpdate(int projectId)
         {
             var project = await birdTsueDBContext.Projects
@@ -191,7 +163,7 @@ namespace TSUE.Services
 
             return updateProjectViewModel;
         }
-
+        
         public async Task<int> UpdateProject(UpdateProjectViewModel model)
         {
             var project = await birdTsueDBContext.Projects
