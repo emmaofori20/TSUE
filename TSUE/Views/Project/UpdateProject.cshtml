@@ -10,6 +10,8 @@
     }
     ViewData["Title"] = "Update Project";
 }
+
+<link href="~/lib/select2/css/select2.css" rel="stylesheet" />
 <link href="~/lib/Trumbowyg-main/Trumbowyg-main/dist/ui/trumbowyg.css" rel="stylesheet" />
 <div style="padding:2%; background-color:white">
     <h1>Update Project</h1>
@@ -48,8 +50,8 @@
                     <div class="col-sm">
                         <div>
                             <label>Select Country <span class="text-danger">*</span></label>
-                            <select class="form-control" asp-items="@ViewBag.SelectCountry" asp-for="@Model.CountryId">
-                                <option value="none">Select Country...</option>
+                            <select class="form-control js-example-basic-multiple select2-selection--multiple" asp-items="@ViewBag.SelectCountry" asp-for="@Model.CountryId" multiple="multiple">
+                                <option value="none">Select Country(ies)...</option>
                             </select>
                             <span class="text-danger" asp-validation-for="CountryId"></span>
                         </div>
@@ -115,9 +117,16 @@
 @section scripts{
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/select2/js/select2.js" defer></script>
     <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js"></script>
     <script>
         $('#editor').trumbowyg();
+        $(document).ready(function () {
+            $('.js-example-basic-multiple').select2(
+                
+            );
+
+        });
     </script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script>
@@ -172,10 +181,10 @@
 
 
 @*<script>
-    imgInp.onchange = evt => {
-        const [file] = imgInp.files
-        if (file) {
-            blah.src = URL.createObjectURL(file)
+        imgInp.onchange = evt => {
+            const [file] = imgInp.files
+            if (file) {
+                blah.src = URL.createObjectURL(file)
+            }
         }
-    }
-</script>*@
+    </script>*@

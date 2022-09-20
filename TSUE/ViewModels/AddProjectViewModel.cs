@@ -34,6 +34,7 @@ namespace TSUE.ViewModels
         public SelectList SelectDocumentType { get; set; }
         [Required]
         public List<int> CountryId { get; set; }
+
         public SelectList SelectCountry { get; set; }
         public int LanguageId { get; set; }
         public SelectList SelectLanguage { get; set; }
