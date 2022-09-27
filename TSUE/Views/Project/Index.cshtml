@@ -1,5 +1,4 @@
-﻿@using TSUE.Models.Data
-@model FilterFormAndProjectViewModel
+﻿@model FilterFormAndProjectViewModel
 @{
     if (User.Identity.IsAuthenticated)
     {
@@ -63,7 +62,7 @@
                 <span>All Projects</span>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <a class="btn btn-primary" asp-action="CreatePost" asp-controller="Project" style="float:right">Create Project</a>
+                    <a class="btn btn-success" asp-action="CreatePost" asp-controller="Project" style="float:right">Create Project</a>
 
                 }
 

@@ -23,5 +23,6 @@ namespace TSUE.ViewModels
         public string FullName { get; set; }
         [Required]
         public string Message { get; set; }
+        public int Rate { get; set; }
     }
 }

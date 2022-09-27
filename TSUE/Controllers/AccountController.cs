@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TSUE.Models;
 using TSUE.ViewModels;
 
 namespace TSUE.Controllers
@@ -25,7 +26,19 @@ namespace TSUE.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return RedirectToAction("Index","Admin");
+            try
+            {
+                return RedirectToAction("Index", "Admin");
+
+            }
+            catch (Exception err)
+            {
+                var ErrorMessage = new ErrorViewModel()
+                {
+                    RequestId = err.Message
+                };
+                return View("Error", ErrorMessage);
+            }
         }
 
         [HttpPost]

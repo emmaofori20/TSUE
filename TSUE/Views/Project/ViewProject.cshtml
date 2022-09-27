@@ -4,6 +4,7 @@
     ViewData["Title"] = "Project";
 }
 <link href="~/css/Comment.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!-- Begin Article
 ================================================== -->
@@ -29,7 +30,7 @@
                 </ul>
                 <div class="sep">
                 </div>
-                <p >
+                <p>
                     Talk
                 </p>
                 <ul>
@@ -67,7 +68,6 @@
                 </p>
             </div>
             <!--ARTICLE POST AREA-->
-
             <!-- DOCUMENT AREA -->
             <div class="row">
                 <div class="after-post-tags">
@@ -100,10 +100,9 @@
                 </div>
             </div>
             <!-- DOCUMENT AREA -->
-            
             <!----COMMENT AREA---->
             <div id="commentBlog" data-bs-spy="scroll" data-bs-target="#CommentSection" data-bs-offset="0" class="scrollspy-example" tabindex="0">
-                <div class="row" >
+                <div class="row">
                     <div class="col-sm-5 col-md-6 col-12 pb-4">
                         <h1 style="color:black">Comments</h1>
                         @if (Model.ProjectComment.Count == 0)
@@ -114,11 +113,45 @@
                         {
                             foreach (var item in Model.ProjectComment)
                             {
-                                <div class="comment mt-4 text-justify float-left">
-                                    <h4>@item.FullName</h4>
-                                    <span>-@item.CreatedOn</span>
-                                    <br>
-                                    <p>@item.Message</p>
+                                <div class="card" style="background:none;">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md">
+                                                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; ">
+                                                    <div style="display:block" class="float-left">
+                                                        <strong>
+                                                            @item.FullName
+
+                                                        </strong>
+                                                        <h5 style="font-size: 13px; font-weight: lighter; ">  @item.Email</h5>
+
+                                                    </div>
+
+                                                    @if (item.Rating != 0)
+                                                    {
+                                                        <div style="display:flex">
+                                                            @for (int i = 0; i < item.Rating; i++)
+                                                            {
+                                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+
+                                                            }
+                                                        </div>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                                        <h5>0/5</h5>
+                                                    }
+
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <p> @item.Message </p>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
                             }
                         }
@@ -136,14 +169,42 @@
                                 <label for="name">Full Name</label>
                                 <input asp-for="AddComment.FullName" type="text" class="form-control">
                                 <span asp-validation-for="AddComment.FullName" class="text-danger"></span>
-                                
+
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
                                 <input asp-for="AddComment.Email" type="text" class="form-control">
                                 <span asp-validation-for="AddComment.Email" class="text-danger"></span>
                             </div>
+                            <div class="form-group">
+                                <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+                                <div class="form-group" id="rating-ability-wrapper">
+                                    <label class="control-label" for="rating">
+                                        <span class="field-label-header">How would you rate this project?</span><br>
+                                        <span class="field-label-info"></span>
+                                        <input type="text" hidden asp-for="@Model.AddComment.Rate" id="selected_rating">
+                                    </label>
+                                    <h5 class="rating-header" style="color:white">
+                                        <span class="selected-rating">0</span><small> / 5</small>
+                                    </h5>
+                                    <button type="button" style="color:white" class="btnrating btn " data-attr="1" id="rating-star-1">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" style="color:white" class="btnrating btn btn-default" data-attr="2" id="rating-star-2">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" style="color:white" class="btnrating btn btn-default" data-attr="3" id="rating-star-3">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" style="color:white" class="btnrating btn btn-default" data-attr="4" id="rating-star-4">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" style="color:white" class="btnrating btn btn-default" data-attr="5" id="rating-star-5">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    </button>
+                                </div>
 
+                            </div>
                             <div class="form-group">
                                 <button type="submit" id="post" class="btn">Post Comment</button>
                             </div>
@@ -195,5 +256,28 @@
                 var newwin = window.open("@Url.Action("DownloadProjectDocument", "Project")" +"?DocumentId="+ documentId);
             });
 
+
+
+        $(".btnrating").on('click', (function (e) {
+
+            var previous_value = $("#selected_rating").val();
+
+            var selected_value = $(this).attr("data-attr");
+            $("#selected_rating").val(selected_value);
+
+            $(".selected-rating").empty();
+            $(".selected-rating").html(selected_value);
+
+            for (i = 1; i <= selected_value; ++i) {
+                $("#rating-star-" + i).toggleClass('btn-warning');
+                $("#rating-star-" + i).toggleClass('btn-default');
+            }
+
+            for (ix = 1; ix <= previous_value; ++ix) {
+                $("#rating-star-" + ix).toggleClass('btn-warning');
+                $("#rating-star-" + ix).toggleClass('btn-default');
+            }
+
+        }));
     });
 </script>
