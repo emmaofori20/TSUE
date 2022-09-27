@@ -141,6 +141,7 @@ namespace TSUE.Services
                 .Include(x => x.ProjectLanguages)
                 .ThenInclude(x => x.Language)
                 .FirstOrDefaultAsync(x => x.ProjectId == projectId);
+
             UpdateProjectViewModel updateProjectViewModel = new UpdateProjectViewModel()
             {
                 ProjectId = project.ProjectId,
@@ -151,9 +152,10 @@ namespace TSUE.Services
                 YearOfPublication = project.YearOfPublication,
                 ProjectIconByte = project.ProjectIcon,
                 DocumentTypeId = project.DocumentTypeId,
-                CountryId = project.ProjectCountries.FirstOrDefault(x => x.ProjectId == projectId).CountryId,
-                LanguageId = project.ProjectLanguages.FirstOrDefault(x => x.ProjectId == projectId).LanguageId,
-                ProjectDocumentsForUpdate = project.ProjectDocuments.Select(x => new ProjectDocumentForUpdate
+                LanguageId = project.ProjectLanguages.FirstOrDefault(x => x.ProjectId == projectId).LanguageId,   
+                CountryId = project.ProjectCountries.Select(x=>x.CountryId).ToList(),
+                ProjectCountryIds = project.ProjectCountries.Where(x => x.ProjectId == projectId).ToList(),
+            ProjectDocumentsForUpdate = project.ProjectDocuments.Select(x => new ProjectDocumentForUpdate
                 {
                     ProjectDocumentId = x.ProjectDocumentId,
                     ProjectId = project.ProjectId,
@@ -161,6 +163,8 @@ namespace TSUE.Services
                     ProjectDocumentByte = x.DocumentFile
                 }).ToList()
             };
+
+           
 
             return updateProjectViewModel;
         }
@@ -196,15 +200,15 @@ namespace TSUE.Services
                     }
                 }
 
-                if (model.CountryId != project.ProjectCountries.FirstOrDefault().CountryId)
-                {
-                    foreach (var item in project.ProjectCountries)
-                    {
-                        item.CountryId = model.CountryId;
-                        item.ProjectId = model.ProjectId;
-                        birdTsueDBContext.ProjectCountries.Update(item);
-                    }
-                }
+                //if (model.CountryIds != project.ProjectCountries.FirstOrDefault().CountryId)
+                //{
+                //    foreach (var item in project.ProjectCountries)
+                //    {
+                //        item.CountryId = model.CountryId;
+                //        item.ProjectId = model.ProjectId;
+                //        birdTsueDBContext.ProjectCountries.Update(item);
+                //    }
+                //}
 
 
 

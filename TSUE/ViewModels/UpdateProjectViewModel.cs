@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using TSUE.Models.Data;
 
 namespace TSUE.ViewModels
 {
@@ -29,7 +30,8 @@ namespace TSUE.ViewModels
         public int DocumentTypeId { get; set; }
         public SelectList SelectDocumentType { get; set; }
         [Required]
-        public int CountryId { get; set; }
+        public List<ProjectCountry> ProjectCountryIds { get; set; }
+        public List<int> CountryId{ get; set; }
         public SelectList SelectCountry { get; set; }
         public int LanguageId { get; set; }
         public SelectList SelectLanguage { get; set; }

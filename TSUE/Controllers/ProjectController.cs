@@ -187,7 +187,6 @@ namespace TSUE.Controllers
 
                 var project = await projectService.GetProjectForUpdate(ProjectId);
 
-                
                 return View(project);
             }
             catch (Exception ex)
