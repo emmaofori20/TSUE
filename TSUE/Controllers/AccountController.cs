@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TSUE.Models;
+using TSUE.Utils;
 using TSUE.ViewModels;
 
 namespace TSUE.Controllers
@@ -24,21 +25,56 @@ namespace TSUE.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            string url = "";
+
             try
             {
-                return RedirectToAction("Index", "Admin");
+                
+                string finalURL = "";
 
-            }
-            catch (Exception err)
-            {
-                var ErrorMessage = new ErrorViewModel()
+                var baseUrl = AppHttpContext.AppBaseUrl(HttpContext);
+
+                var userClaim = User.Claims.Where(x => x.Type.ToLower() == "Name".ToLower()).FirstOrDefault();
+
+                if (userClaim == null)
                 {
-                    RequestId = err.Message
-                };
-                return View("Error", ErrorMessage);
+                    return await Logout();
+                }
+
+                string username = userClaim.Value;
+                url = User.Claims.Where(x => x.Type.ToLower() == "PathURL".ToLower()).FirstOrDefault().Value;
+                
+                finalURL = baseUrl + url;
+
+                return Redirect(finalURL);
             }
+            catch (Exception ex)
+            {
+                /**/
+                //return RedirectToAction("home", "error",new { area = "admin" });
+                return await Logout();
+            }
+            //try
+            //{
+            //    return RedirectToAction("Index", "Admin");
+
+            //}
+            //catch (Exception err)
+            //{
+            //    var ErrorMessage = new ErrorViewModel()
+            //    {
+            //        RequestId = err.Message
+            //    };
+            //    return View("Error", ErrorMessage);
+            //}
+        }
+
+        public async Task<IActionResult> Unauthorized()
+        {
+            
+            return View();
         }
 
         [HttpPost]

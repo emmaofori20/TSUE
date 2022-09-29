@@ -74,12 +74,12 @@
             <div id="divSearchStudent"></div>
             <form id="myFormParam" class="col-md-4" method="post" asp-action="FilterProjectsBySpecificParmeters" asp-controller="Project">
                 <div class="form-group">
+                    <input type="text" class="form-control" asp-for="StudyTitle" placeholder="Search">
+                </div>
+                <div class="form-group">
                     <select class="form-control" asp-items="@Model.SelectDocumentType" asp-for="DocumentTypeId">
                         <option selected> Filter by Document Type </option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" asp-for="StudyTitle" placeholder="Enter Study Tile">
                 </div>
                 <div class="form-group">
                     <select class="form-control" asp-for="CountryId" asp-items="@Model.SelectCountry">
@@ -113,8 +113,8 @@
     $('#myFormwithParameters').click(function () {
 
         var Formdata = $('#myFormParam').serializeArray();
-        console.log($('#myFormParam').serializeArray());
-        Formdata.pop();// remove array last element
+        console.log($('#myFormParam').serialize());
+        var requestToken = Formdata.pop();// remove array last element
         let data = {}
         for (var i = 0; i < Formdata.length; i++) {
             data[Formdata[i].name] = Formdata[i].value;
@@ -124,8 +124,9 @@
             url: "/Project/FilterProjectsBySpecificParmeters",
             dataType: 'html',
             method: 'post',
-            data: { "model": data },
-            beforeSend: function () {
+            data: { model: data },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("RequestVerificationToken", requestToken);
                 toastr.info("Filtering data", "Filtering")
             },
             success: function (res) {

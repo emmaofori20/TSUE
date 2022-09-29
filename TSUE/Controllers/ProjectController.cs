@@ -44,6 +44,7 @@ namespace TSUE.Controllers
         }
 
         [HttpPost]
+        //[ValidateAntiForgeryToken]
         public IActionResult FilterProjectsBySpecificParmeters(FilterFormAndProjectViewModel model)
         {
             var allProjects = projectService.GetAllProject();
@@ -101,7 +102,8 @@ namespace TSUE.Controllers
                 if (ModelState.IsValid)
                 {
                     projectService.AddProjectComment(model);
-                    return RedirectToAction("ViewProject", "Project", new { ProjectId = model.ProjectId });
+                    return Json(model);
+                    //return RedirectToAction("ViewProject", "Project", new { ProjectId = model.ProjectId });
 
                 }
                 var res = projectService.GetProject(model.ProjectId);
@@ -130,7 +132,7 @@ namespace TSUE.Controllers
             var projectAndComment = new ProjectAndCommentViewModel
             {
                 project = res,
-                ProjectComment = res.ProjectComments.ToList(),
+                ProjectComment = res.ProjectComments.OrderByDescending(x=>x.CreatedOn).ToList(),
                 ProjectId = res.ProjectId
             };
             return View(projectAndComment);

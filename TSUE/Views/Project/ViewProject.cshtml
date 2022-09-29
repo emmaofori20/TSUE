@@ -111,49 +111,60 @@
                         }
                         else
                         {
-                            foreach (var item in Model.ProjectComment)
-                            {
-                                <div class="card" style="background:none;">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md">
-                                                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; ">
-                                                    <div style="display:block" class="float-left">
-                                                        <strong>
-                                                            @item.FullName
+                            <div id="ScrollableDiv" style=" height:500px; overflow:hidden">
+                                @foreach (var item in Model.ProjectComment)
+                                {
+                                    <div class="card" style="background:none;">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; ">
+                                                        <div style="display:block" class="float-left">
+                                                            <h5 style="display:flex; font-size:12px; grid-gap:5px">
+                                                                <strong>
+                                                                    @item.FullName
 
-                                                        </strong>
-                                                        <h5 style="font-size: 13px; font-weight: lighter; ">  @item.Email</h5>
+                                                                </strong>
+                                                                <span>
+                                                                    @item.CreatedOn
+                                                                </span>
 
-                                                    </div>
+                                                            </h5>
+                                                            <h5 style="font-size: 13px; font-weight: lighter; ">  @item.Email</h5>
 
-                                                    @if (item.Rating != 0)
-                                                    {
-                                                        <div style="display:flex">
-                                                            @for (int i = 0; i < item.Rating; i++)
-                                                            {
-                                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-
-                                                            }
                                                         </div>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                        <h5>0/5</h5>
-                                                    }
+                                                        @if (item.Rating != 0)
+                                                        {
+                                                            <div style="display:flex">
+                                                                @for (int i = 0; i < item.Rating; i++)
+                                                                {
+                                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+
+                                                                }
+                                                            </div>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                                            <h5>0/5</h5>
+                                                        }
+
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                    <p> @item.Message </p>
 
                                                 </div>
-                                                <div class="clearfix"></div>
-                                                <p> @item.Message </p>
-
                                             </div>
-                                        </div>
 
+                                        </div>
                                     </div>
-                                </div>
-                            }
+                                }
+
+                            </div>
+                            <button class="btn btn-primary" id="Scrollbutton"> View more </button>
+ 
                         }
 
                     </div>
@@ -206,7 +217,7 @@
 
                             </div>
                             <div class="form-group">
-                                <button type="submit" id="post" class="btn">Post Comment</button>
+                                <button type="button" id="postComment" class="btn btn-primary">Post Comment</button>
                             </div>
                         </form>
                     </div>
@@ -227,7 +238,6 @@
     $(document).ready(function () {
         var VisitorData;
         $.get("https://ipinfo.io?token=852c5133673d5e", function (data, status) {
-            console.log(data)
             VisitorData = data;
             let visitorDetails = {
                 "ProjectId": @Model.ProjectId,
@@ -256,8 +266,6 @@
                 var newwin = window.open("@Url.Action("DownloadProjectDocument", "Project")" +"?DocumentId="+ documentId);
             });
 
-
-
         $(".btnrating").on('click', (function (e) {
 
             var previous_value = $("#selected_rating").val();
@@ -279,5 +287,45 @@
             }
 
         }));
+
+        $('#Scrollbutton').click(function () {
+            document.getElementById("ScrollableDiv").style.overflow = "auto";
+        })
+
+        $('#postComment').click(function () {
+
+            var Formdata = $('#algin-form').serializeArray();
+            var requestToken = Formdata.pop();// remove array last element
+            console.log('form clicked', Formdata);
+
+            let data = {}
+            for (var i = 0; i < Formdata.length; i++) {
+                data[Formdata[i].name] = Formdata[i].value;
+            }
+            console.log("the data", data)
+            $.ajax({
+                url: "/Project/AddComments",
+                dataType: 'html',
+                method: 'post',
+                data: { model: data },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("RequestVerificationToken", requestToken);
+                //    toastr.info("Filtering data", "Filtering")
+                },
+                success: function (res) {
+                    debugger
+                    console.log('Sucess');
+                    console.log(res);
+                    $("#ScrollableDiv").html(res);
+                //    toastr.success("Data filtered", "Success")
+                },
+                error: function (err) {
+                    console.log(err, "err");
+                //    toastr.error("An error Ocurred", "Error")
+                }
+            });
+
+           
+        })
     });
 </script>
