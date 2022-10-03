@@ -14,10 +14,12 @@ namespace TSUE.Controllers
     public class DocumentTypeController : Controller
     {
         private readonly IDocumentTypeService documentTypeService;
+        private readonly IProjectService projectService;
 
-        public DocumentTypeController(IDocumentTypeService documentTypeService)
+        public DocumentTypeController(IDocumentTypeService documentTypeService, IProjectService projectService)
         {
             this.documentTypeService = documentTypeService;
+            this.projectService = projectService;
         }
         // GET: CategoryController
         public ActionResult Index()
@@ -28,9 +30,15 @@ namespace TSUE.Controllers
 
         public ActionResult GetProjectsBelongingToDocumentType(int DocumentTypeId)
         {
+            var filterformAndProject = new FilterFormAndProjectViewModel
+            {
+                projects = documentTypeService.GetProjectsBelongingToDocumentType(DocumentTypeId),
+                SelectCountry = projectService.SetProjectParametersToCreateProject().SelectCountry,
+                SelectDocumentType = projectService.SetProjectParametersToCreateProject().SelectDocumentType,
+                SelectLanguage = projectService.SetProjectParametersToCreateProject().SelectLanguage,
+            };
             ViewBag.DocumentTypeName = documentTypeService.GetDocumentType(DocumentTypeId).DocumentTypeName;
-            var res=documentTypeService.GetProjectsBelongingToDocumentType(DocumentTypeId);
-            return View(res);
+            return View(filterformAndProject);
         }
 
         // GET: CategoryController/Create

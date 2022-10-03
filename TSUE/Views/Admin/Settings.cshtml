@@ -1,0 +1,161 @@
+﻿@model AddUserViewModel
+@{
+    ViewData["Title"] = "Settings";
+    Layout = "~/Views/Shared/_SecondLayout.cshtml";
+}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link href="~/css/UserManagement.css" rel="stylesheet" />
+
+<div class="container-xl">
+    <div style="float: right;  ">
+        <button data-toggle="modal" data-target="#exampleModal" class="btn btn-success" style="display:flex"><i class="material-icons">&#xE147;</i> <span>Add New User</span></button>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add New User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-controller="Admin" asp-action="AddNewUser">
+                        <!-- 2 column grid layout with text inputs for the first and last names -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" asp-for="StaffId" class="form-control" />
+                                    <label class="form-label" for="form3Example1">Staff Id</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-outline">
+                                    <button class="btn btn-success">Verify</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Surname input -->
+                        <div class="form-outline mb-4">
+                            <input type="text" asp-for="SurName" class="form-control" />
+                            <label class="form-label" for="form3Example3">SurName</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="text" asp-for="OtherName" class="form-control" />
+                            <label class="form-label" for="form3Example3">OtherName(s)</label>
+                        </div>
+
+                        <!-- TechMail input -->
+                        <div class="form-outline mb-4">
+                            <input type="text" asp-for="TechMail" class="form-control" />
+                            <label class="form-label" for="form3Example4">TechMail</label>
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="Submit" class="btn btn-primary">Add user</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Date Created</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><a href="#"> Michael Holz</a></td>
+                        <td>04/10/2013</td>
+                        <td>Admin</td>
+                        <td><span class="status text-success">&bull;</span> Active</td>
+                        <td>
+                            <a href="#" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
+                            <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><a href="#"> Paula Wilson</a></td>
+                        <td>05/08/2014</td>
+                        <td>Publisher</td>
+                        <td><span class="status text-success">&bull;</span> Active</td>
+                        <td>
+                            <a href="#" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
+                            <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><a href="#"> Antonio Moreno</a></td>
+                        <td>11/05/2015</td>
+                        <td>Publisher</td>
+                        <td><span class="status text-danger">&bull;</span> Suspended</td>
+                        <td>
+                            <a href="#" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
+                            <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><a href="#"> Mary Saveley</a></td>
+                        <td>06/09/2016</td>
+                        <td>Reviewer</td>
+                        <td><span class="status text-success">&bull;</span> Active</td>
+                        <td>
+                            <a href="#" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
+                            <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><a href="#"> Martin Sommer</a></td>
+                        <td>12/08/2017</td>
+                        <td>Moderator</td>
+                        <td><span class="status text-warning">&bull;</span> Inactive</td>
+                        <td>
+                            <a href="#" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
+                            <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="clearfix">
+                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+                <ul class="pagination">
+                    <li class="page-item disabled"><a href="#">Previous</a></li>
+                    <li class="page-item"><a href="#" class="page-link">1</a></li>
+                    <li class="page-item"><a href="#" class="page-link">2</a></li>
+                    <li class="page-item active"><a href="#" class="page-link">3</a></li>
+                    <li class="page-item"><a href="#" class="page-link">4</a></li>
+                    <li class="page-item"><a href="#" class="page-link">5</a></li>
+                    <li class="page-item"><a href="#" class="page-link">Next</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

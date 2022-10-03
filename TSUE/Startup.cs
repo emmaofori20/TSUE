@@ -43,6 +43,8 @@ namespace TSUE
             services.AddDbContext<BirdTsueDBContext>(options => options.UseSqlServer(
                   Configuration.GetConnectionString("DefaultConnection1")));
 
+            var dbContext = services.BuildServiceProvider()
+                .GetService<BirdTsueDBContext>();
 
             //services.AddIdentity<IdentityUser, IdentityRole>()
             //    .AddEntityFrameworkStores<TSUEProjectDbContext>();
@@ -94,13 +96,21 @@ namespace TSUE
                     //    RoleClaimType = "role"
                     //};
 
-                    //CustomHandlers cHandler = new CustomHandlers(adminDbContext);
+                    CustomHandlers cHandler = new CustomHandlers(dbContext);
 
                     options.Events = new OpenIdConnectEvents
                     {
-                        //OnTicketReceived = cHandler.InitializeUserClaims
+                        OnTicketReceived = cHandler.InitializeUserClaims
                     };
                 });
+
+            services.AddSession(options =>
+            {
+                // Set a short timeout for easy testing.
+                options.IdleTimeout = TimeSpan.FromMinutes(15);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             services.AddControllersWithViews();
             services.AddTransient<IProjectService, ProjectService>();
@@ -123,7 +133,7 @@ namespace TSUE
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthentication();

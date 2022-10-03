@@ -88,7 +88,12 @@ namespace TSUE.Services
 
         public List<Project> GetProjectsBelongingToDocumentType(int DocumentTypeId)
         {
-            return birdTsueDBContext.Projects.Include(x => x.ProjectDocuments).Where(x => x.DocumentTypeId == DocumentTypeId).ToList();
+            return birdTsueDBContext.Projects
+                .Include(x => x.ProjectDocuments)
+                .Include(x=> x.ProjectLanguages)
+                .ThenInclude(y=>y.Language)
+                .Include(x=> x.ProjectCountries)
+                .Where(x => x.DocumentTypeId == DocumentTypeId).ToList();
         }
 
         private byte[] UploadImage(IFormFile formFile)

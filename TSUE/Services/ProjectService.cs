@@ -123,7 +123,8 @@ namespace TSUE.Services
                 ProjectId = model.ProjectId,
                 FullName = model.AddComment.FullName,
                 CreatedBy = model.AddComment.FullName,
-                CreatedOn = DateTime.Now
+                CreatedOn = DateTime.Now,
+                Rating = model.AddComment.Rate
             };
 
             birdTsueDBContext.ProjectComments.Add(ProjectComment);

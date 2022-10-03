@@ -1,5 +1,4 @@
-﻿@using TSUE.Models
-@model List<TSUE.Models.Data.Project>
+﻿@model FilterFormAndProjectViewModel
 
 
 @{
@@ -17,111 +16,44 @@
 
 <section class="recent-posts">
     <div class="section-title">
-        <h2><span>@ViewBag.DocumentTypeName Project Category </span></h2>
+        <h2><span>@ViewBag.DocumentTypeName Category </span></h2>
     </div>
     <div class="row">
-        <form class="col-md-4">
+        <form id="myFormParam" class="col-md-4" method="post" asp-action="FilterProjectsBySpecificParmeters" asp-controller="Project">
             <div class="form-group">
-                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Document Type">
+                <input type="text" class="form-control" asp-for="StudyTitle" placeholder="Search">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Study Tile">
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Countries">
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Language">
+                <select class="form-control" asp-items="@Model.SelectDocumentType" asp-for="DocumentTypeId" disabled>
+                    <option selected> Filter by Document Type </option>
+                </select>
             </div>
 
-            <input type="submit" class="btn btn-primary" value="Apply Filter" />
+            <div class="form-group">
+                <select class="form-control" asp-for="CountryId" asp-items="@Model.SelectCountry">
+                    <option selected> Filter By country </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" asp-for="LanguageId" asp-items="@Model.SelectLanguage">
+                    <option selected> Filter By Language</option>
+                </select>
+            </div>
+
+            <input id="myFormwithParameters" type="button" class="btn btn-success" value="Apply Filter" />
         </form>
         <div class="col-md">
 
-
-            @if (Model.Count == 0)
+            @if (Model.projects.Count == 0)
             {
                 <h4 style="text-align:center">No Data found </h4>
             }
             else
             {
-                @foreach (var item in Model)
-                {
-                    <div class="card" style="padding:4%; width:590px;height:200px; margin-bottom:5px; ">
-                        <div class="Card_container">
-                            <div>
-                                <a asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId" style="width:0px">
-                                    <div style="height: 150px; width: 110px;">
-                                        @if (@item.ProjectIcon == null)
-                                        {
-                                            <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="https://www.kindpng.com/picc/m/86-865923_no-document-hd-png-download.png" alt="">
+        <div id="FilteredProject">
+                @await Html.PartialAsync("~/Views/Project/_AllProjectsPartialView.cshtml");
 
-                                        }
-                                        else
-                                        {
-                                            <img class="thumbnail" style="object-fit: cover; height: 100%; width: 100%;" src="data:image;base64,@Convert.ToBase64String(item.ProjectIcon)" ; />
-
-                                        }
-
-
-                                    </div>
-                                </a>
-                            </div>
-                            <div style="display: flex; flex-direction: column; justify-content: space-around;">
-                                <div class="card-title">
-                                    <h4 style="font-size:13px">@item.DocumentType.DocumentTypeName</h4>
-                                    <a style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; /* number of lines to show */ font-size:12px; "
-                                       asp-controller="Category" asp-action="CategoryProject" asp-route-CategoryId="@item.ProjectId">@item.StudyTitle</a>
-                                </div>
-
-                                <div class="controls">
-                                    <div class="Calander">
-                                        <i class='bx bx-calendar'></i>
-                                        <p>@item.YearOfPublication</p>
-                                    </div>
-                                    <div class="Pages">
-                                        <i class='bx bx-spreadsheet'></i>
-                                        <p>@item.Authors</p>
-                                    </div>
-                                    <div class="Attach">
-                                        <i class='bx bx-paperclip'></i>
-                                        <p>@item.ProjectDocuments.Count Documents</p>
-                                    </div>
-                                    <div class="Languages">
-                                        <i class='bx bx-world'></i>
-                                        <p>@item.ProjectLanguages.Where(x => x.ProjectId == item.ProjectId).FirstOrDefault()</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-rows: auto 1fr; grid-gap:10%">
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <i class='bx bx-dots-vertical-rounded' style="float:right;padding:2%; ">
-                                        <!-- menu -->
-                                        <div id="myDropdown" class="dropdown-content">
-                                            <a class="btn btn-warning"
-                                               asp-controller="Category" asp-action="EditDocumentType" asp-route-DocumentTypeId="@item.DocumentTypeId">Edit</a>
-                                            <a class="btn btn-danger"
-                                               asp-route-CategoryId="@item.DocumentTypeId"
-                                               onclick="return ConfirmDeleteForCategory(@item.DocumentTypeId)">Delete</a>
-                                        </div>
-                                    </i>
-                                }
-
-                                <div style=" display: flex; flex-direction: column; justify-content:space-evenly ">
-                                    <div class="OverView">
-                                        <i style=" font-size: 24px; " class='bx bx-file-find'></i>
-                                        <p>Overview</p>
-                                    </div>
-                                    <div class="OverView">
-                                        <i class='bx bx-share-alt'></i>
-                                        <p>Share</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
+        </div>
 
             }
 
@@ -130,3 +62,41 @@
         </div>
     </div>
 </section>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/toastr.js/toastr.min.js"></script>
+<script>
+
+    $('#myFormwithParameters').click(function () {
+
+        var Formdata = $('#myFormParam').serializeArray();
+        console.log($('#myFormParam').serializeArray());
+        Formdata.pop();// remove array last element
+        let data = {}
+        for (var i = 0; i < Formdata.length; i++) {
+            data[Formdata[i].name] = Formdata[i].value;
+        }
+        
+        $.ajax({
+            url: "/Project/FilterProjectsBySpecificParmeters",
+            dataType: 'html',
+            method: 'post',
+            data: { "model": data },
+            beforeSend: function () {
+                toastr.info("Filtering data", "Filtering")
+            },
+            success: function (res) {
+                $("#FilteredProject").html(res);
+                toastr.success("Data filtered", "Success")
+            },
+            error: function (err) {
+                console.log(err, "err");
+                toastr.error("An error Ocurred", "Error")
+            }
+        });
+
+
+
+    });
+
+</script>

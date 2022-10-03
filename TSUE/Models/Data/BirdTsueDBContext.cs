@@ -19,6 +19,8 @@ namespace TSUE.Models.Data
 
         public virtual DbSet<AnalyticType> AnalyticTypes { get; set; }
         public virtual DbSet<AnalyticTypeResponse> AnalyticTypeResponses { get; set; }
+        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public virtual DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
         public virtual DbSet<Language> Languages { get; set; }
@@ -28,11 +30,12 @@ namespace TSUE.Models.Data
         public virtual DbSet<ProjectDocument> ProjectDocuments { get; set; }
         public virtual DbSet<ProjectLanguage> ProjectLanguages { get; set; }
         public virtual DbSet<ProjectSector> ProjectSectors { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Sector> Sectors { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+         
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -75,6 +78,50 @@ namespace TSUE.Models.Data
                     .HasForeignKey(d => d.AnalyticTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("PK_AnalyticType_AnalyticTypeResponse");
+            });
+
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.ToTable("ApplicationUser");
+
+                entity.Property(e => e.CreatedBy)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.OtherNames).HasMaxLength(255);
+
+                entity.Property(e => e.StaffId).HasColumnName("StaffID");
+
+                entity.Property(e => e.SurName).HasMaxLength(255);
+
+                entity.Property(e => e.UpdatedBy).HasMaxLength(150);
+
+                entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(150);
+            });
+
+            modelBuilder.Entity<ApplicationUserRole>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("ApplicationUserRole");
+
+                entity.HasOne(d => d.ApplicationUser)
+                    .WithMany()
+                    .HasForeignKey(d => d.ApplicationUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ApplicationUserRole_User");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany()
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ApplicationUserRole_Role");
             });
 
             modelBuilder.Entity<Country>(entity =>
@@ -249,6 +296,15 @@ namespace TSUE.Models.Data
                     .HasForeignKey(d => d.SectorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("PK_Sector_ProjectSector");
+            });
+
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.ToTable("Role");
+
+                entity.Property(e => e.RoleName)
+                    .IsRequired()
+                    .HasMaxLength(150);
             });
 
             modelBuilder.Entity<Sector>(entity =>
