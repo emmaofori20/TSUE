@@ -36,5 +36,23 @@ namespace TSUE.Controllers
             ViewBag.Rep = repartitions.ToList().OrderByDescending(x=>x.NumberOfVisits).Take(10);
             return View(response);
         }
+
+        public IActionResult Settings()
+        {
+            return View();
+        }
+
+        public IActionResult AddNewUser(AddUserViewModel model)    
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
     }
 }

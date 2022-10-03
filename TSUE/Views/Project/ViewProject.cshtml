@@ -134,7 +134,7 @@
 
                                                         </div>
 
-                                                        @if (item.Rating != 0)
+                                                        @if (item.Rating != null)
                                                         {
                                                             <div style="display:flex">
                                                                 @for (int i = 0; i < item.Rating; i++)
@@ -147,8 +147,8 @@
                                                         }
                                                         else
                                                         {
-                                                            <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                            <h5>0/5</h5>
+                                                            @*<span class="float-right"><i style="border:1px solid black; height:2px" class="text-warning fa fa-star">www</i></span>
+                                                            <h5 style="color:black">0/5</h5>*@
                                                         }
 
                                                     </div>
@@ -164,7 +164,7 @@
 
                             </div>
                             <button class="btn btn-primary" id="Scrollbutton"> View more </button>
- 
+
                         }
 
                     </div>
@@ -234,6 +234,8 @@
 
 </div>
 <script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/toastr.js/toastr.min.js"></script>
+
 <script>
     $(document).ready(function () {
         var VisitorData;
@@ -310,22 +312,30 @@
                 data: { model: data },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("RequestVerificationToken", requestToken);
-                //    toastr.info("Filtering data", "Filtering")
+                   toastr.info("Filtering data", "Filtering")
                 },
                 success: function (res) {
-                    debugger
-                    console.log('Sucess');
-                    console.log(res);
-                    $("#ScrollableDiv").html(res);
-                //    toastr.success("Data filtered", "Success")
+                    console.log('Success');
+                    //createCommentObject(res);
+                    location.reload();
+                   toastr.success("Data filtered", "Success")
                 },
                 error: function (err) {
                     console.log(err, "err");
-                //    toastr.error("An error Ocurred", "Error")
+                    toastr.error("An error Ocurred", "Error")
                 }
             });
 
-           
+            function createCommentObject(res) {
+                //console.log(res);
+                //var commentObject = '<div class="card" style="background: none; "><div class="card - body"><div class="row">';
+                //commentObject = commentObject + '<div class="col-md"><div style="display: flex; justify-content: space-between; flex-wrap: wrap; ">';
+                //commentObject = commentObject + '<div style="display:block" class="float-left"><h5 style="display:flex; font-size:12px; grid-gap:5px">';
+
+                      
+            }
+
+
         })
     });
 </script>

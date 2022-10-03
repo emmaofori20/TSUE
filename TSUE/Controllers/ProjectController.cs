@@ -99,18 +99,21 @@ namespace TSUE.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    projectService.AddProjectComment(model);
-                    return Json(model);
-                    //return RedirectToAction("ViewProject", "Project", new { ProjectId = model.ProjectId });
+                
+                    if (ModelState.IsValid)
+                    {
+                        projectService.AddProjectComment(model);
+                        return Json(model);
+                        //return RedirectToAction("ViewProject", "Project", new { ProjectId = model.ProjectId });
 
-                }
-                var res = projectService.GetProject(model.ProjectId);
-                model.project = res;
-                model.ProjectComment = res.ProjectComments.ToList();
-                model.ProjectId = res.ProjectId;
-                return View("ViewProject", model);
+                    }
+                    var res = projectService.GetProject(model.ProjectId);
+                    model.project = res;
+                    model.ProjectComment = res.ProjectComments.ToList();
+                    model.ProjectId = res.ProjectId;
+                    return View("ViewProject", model);
+                
+
 
             }
             catch (Exception err)
