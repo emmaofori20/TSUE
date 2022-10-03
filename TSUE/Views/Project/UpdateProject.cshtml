@@ -96,9 +96,9 @@
             </div>
             <div>
                 <h3>Upload Reports</h3>
-                <div id="dZUpload" class="dropzone">
+              @*  <div id="dZUpload" class="dropzone">
                     <div class="dz-default dz-message"></div>
-                </div>
+                </div>*@
 
 
                 @for (int i = 0; i <= Model.ProjectDocumentsForUpdate.Count() - 1; i++)
@@ -108,7 +108,7 @@
             }*@
                     <input type="file" id="myPdf" asp-for="@Model.ProjectDocumentsForUpdate[i].ProjectDocumentFile" /><br>
                     <embed src="data:application/pdf;base64,@Convert.ToBase64String(Model.ProjectDocumentsForUpdate[i].ProjectDocumentByte)" />
-                    <table id="list" cellspacing="0px" cellpadding="20px" text-align="center">
+                    @*<table id="list" cellspacing="0px" cellpadding="20px" text-align="center">
                         <thead>
                             <tr>
                                 <td>Name</td>
@@ -118,7 +118,7 @@
 
                         <tbody>
                         </tbody>
-                    </table>
+                    </table>*@
                 }
             </div>
         </div>
