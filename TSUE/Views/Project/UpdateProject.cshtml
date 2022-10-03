@@ -1,4 +1,6 @@
-﻿@model UpdateProjectViewModel
+﻿@using System.IO;
+
+@model UpdateProjectViewModel
 @{
     if (User.Identity.IsAuthenticated)
     {
@@ -12,7 +14,9 @@
 }
 
 <link href="~/lib/select2/css/select2.css" rel="stylesheet" />
+<link href="~/lib/dropzone/min/dropzone.min.css" rel="stylesheet" />
 <link href="~/lib/Trumbowyg-main/Trumbowyg-main/dist/ui/trumbowyg.css" rel="stylesheet" />
+
 <div style="padding:2%; background-color:white">
     <h1>Update Project</h1>
 
@@ -92,18 +96,30 @@
             </div>
             <div>
                 <h3>Upload Reports</h3>
-                <input type="file" id="myPdf" multiple asp-for="@Model.ProjectDocumentsForUpdate" /><br>
-                <table id="list" cellspacing="0px" cellpadding="20px" text-align="center">
-                    <thead>
-                        <tr>
-                            <td>Name</td>
-                            <td>Action</td>
-                        </tr>
-                    </thead>
+              @*  <div id="dZUpload" class="dropzone">
+                    <div class="dz-default dz-message"></div>
+                </div>*@
 
-                    <tbody>
-                    </tbody>
-                </table>
+
+                @for (int i = 0; i <= Model.ProjectDocumentsForUpdate.Count() - 1; i++)
+                {
+                    @*@{
+                string base64PDF = System.Convert.ToBase64String(outputPDF, 0, outputPDF.Length);
+            }*@
+                    <input type="file" id="myPdf" asp-for="@Model.ProjectDocumentsForUpdate[i].ProjectDocumentFile" /><br>
+                    <embed src="data:application/pdf;base64,@Convert.ToBase64String(Model.ProjectDocumentsForUpdate[i].ProjectDocumentByte)" />
+                    @*<table id="list" cellspacing="0px" cellpadding="20px" text-align="center">
+                        <thead>
+                            <tr>
+                                <td>Name</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        </tbody>
+                    </table>*@
+                }
             </div>
         </div>
 
@@ -119,11 +135,14 @@
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/select2/js/select2.js" defer></script>
     <script src="~/lib/Trumbowyg-main/Trumbowyg-main/dist/trumbowyg.js"></script>
+    <script src="~/lib/dropzone/min/dropzone.min.js"></script>
     <script>
+
+        
         $('#editor').trumbowyg();
         $(document).ready(function () {
             $('.js-example-basic-multiple').select2(
-                
+
             );
 
         });
@@ -138,7 +157,7 @@
         $("#myPdf").on("change", function (e) {
             console.log(e.target.files.length)
             for (var i = 0; i < e.target.files.length; i++) {
-                var rows = "";
+                var rows = "Project/UpdateProject";
                 var file = e.target.files[i]
                 if (file.type == "application/pdf") {
                     console.log(i, e.target.files[i])
@@ -175,6 +194,25 @@
 
             readURL(this);
         });
+
+        Dropzone.autoDiscover = false;
+        $(document).ready(function () {
+
+            //Simple Dropzonejs 
+            $("#dZUpload").dropzone({
+                url: "",
+                addRemoveLinks: true,
+                success: function (file, response) {
+                    var imgName = response;
+                    file.previewElement.classList.add("dz-success");
+                    console.log(“Successfully uploaded : ” + imgName);
+                },
+                error: function (file, response) {
+                    file.previewElement.classList.add("dz-error");
+                }
+            });
+        });
+        
 
     </script>
 }
