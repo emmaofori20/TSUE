@@ -154,7 +154,7 @@ namespace TSUE.Services
                 LanguageId = project.ProjectLanguages.FirstOrDefault(x => x.ProjectId == projectId).LanguageId,   
                 CountryId = project.ProjectCountries.Select(x=>x.CountryId).ToList(),
                 ProjectCountryIds = project.ProjectCountries.Where(x => x.ProjectId == projectId).ToList(),
-            ProjectDocumentsForUpdate = project.ProjectDocuments.Select(x => new ProjectDocumentForUpdate
+                ProjectDocumentsForUpdate = project.ProjectDocuments.Select(x => new ProjectDocumentForUpdate
                 {
                     ProjectDocumentId = x.ProjectDocumentId,
                     ProjectId = project.ProjectId,
